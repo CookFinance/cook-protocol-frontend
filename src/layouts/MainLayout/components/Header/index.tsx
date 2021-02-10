@@ -16,6 +16,7 @@ const useStyles = makeStyles((theme) => ({
     top: 0,
     height: theme.custom.appHeaderHeight,
     backgroundColor: theme.colors.secondary,
+    boxShadow: "0px 10px 14.696px rgba(48, 44, 51, 0.28)",
   },
   content: {
     display: "flex",

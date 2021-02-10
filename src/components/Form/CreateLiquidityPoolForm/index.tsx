@@ -61,6 +61,10 @@ const useStyles = makeStyles((theme) => ({
   },
   autoCompleteInput: {
     fontSize: 24,
+    marginTop: 3,
+    "& input": {
+      fontSize: 24,
+    },
   },
   link: {
     color: transparentize(0.2, theme.colors.default),
