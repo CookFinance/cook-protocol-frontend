@@ -26,3 +26,12 @@ export interface IToken {
   symbol: string;
   image?: string;
 }
+
+export interface IFeaturedLiquidityPool {
+  id: string;
+  address: string;
+  title: string;
+  returns24h: number;
+  riskIndex: string;
+  sector: string;
+}

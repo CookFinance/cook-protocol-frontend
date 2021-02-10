@@ -4,3 +4,4 @@ export * from "./Guard";
 export * from "./Button";
 export * from "./Header";
 export * from "./Form";
+export * from "./Card";
