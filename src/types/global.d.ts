@@ -35,3 +35,14 @@ export interface IFeaturedLiquidityPool {
   riskIndex: string;
   sector: string;
 }
+
+export interface IPool {
+  id: string;
+  address: string;
+  name: string;
+  symbol: string;
+  price: number;
+  returns24h: number;
+  valuation: number;
+  assetType: string;
+}
