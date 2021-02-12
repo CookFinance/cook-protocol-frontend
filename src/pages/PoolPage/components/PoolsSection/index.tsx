@@ -3,11 +3,22 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
   Typography,
   makeStyles,
 } from "@material-ui/core";
+import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
+import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
+import clsx from "clsx";
 import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
+import useCommonStyles from "styles/common";
 import { IPool } from "types";
+import { numberWithCommas } from "utils";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -38,7 +49,6 @@ const useStyles = makeStyles((theme) => ({
   content: {
     marginTop: 60,
   },
-  table: {},
 }));
 
 const mockPools: IPool[] = [
@@ -84,6 +94,8 @@ interface IState {
 
 export const PoolsSection = () => {
   const classes = useStyles();
+  const commonClasses = useCommonStyles();
+  const history = useHistory();
 
   const [state, setState] = useState<IState>({
     filter: { type: "", platform: "", token: "" },
@@ -154,7 +166,46 @@ export const PoolsSection = () => {
         </FormControl>
       </div>
       <div className={classes.content}>
-        <div className={classes.table}></div>
+        <div className={commonClasses.table}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Liquidity Pool</TableCell>
+                <TableCell>Symbol</TableCell>
+                <TableCell>Price</TableCell>
+                <TableCell>Return(24h)</TableCell>
+                <TableCell>Valuation</TableCell>
+                <TableCell>Asset Type</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {mockPools.map((pool) => (
+                <TableRow
+                  className={clsx(
+                    pool.returns24h < 0 ? "negative" : "positive"
+                  )}
+                  key={pool.id}
+                  onClick={() => {
+                    history.push(`/pool/${pool.id}`);
+                  }}
+                >
+                  <TableCell>{pool.name}</TableCell>
+                  <TableCell>{pool.symbol}</TableCell>
+                  <TableCell>${numberWithCommas(pool.price)}</TableCell>
+                  <TableCell>
+                    <span>
+                      {pool.returns24h < 0 && <ArrowDropDownIcon />}
+                      {pool.returns24h >= 0 && <ArrowDropUpIcon />}
+                      {pool.returns24h}%
+                    </span>
+                  </TableCell>
+                  <TableCell>{pool.valuation}</TableCell>
+                  <TableCell>{pool.assetType}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </div>
     </div>
   );

@@ -46,3 +46,11 @@ export interface IPool {
   valuation: number;
   assetType: string;
 }
+
+export interface ITokenDistribution {
+  tokenName: string;
+  quantity: number;
+  value: number;
+  portfolio: number;
+  returns24h: number;
+}

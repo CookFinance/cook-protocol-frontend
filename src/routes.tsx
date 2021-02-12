@@ -14,9 +14,14 @@ const routes = [
         component: lazy(() => import("pages/CreatePage")),
       },
       {
-        exact: false,
+        exact: true,
         path: "/pool",
         component: lazy(() => import("pages/PoolPage")),
+      },
+      {
+        exact: true,
+        path: "/pool/:id",
+        component: lazy(() => import("pages/PoolDetailsPage")),
       },
       {
         exact: false,

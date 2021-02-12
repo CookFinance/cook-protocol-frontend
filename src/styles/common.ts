@@ -68,6 +68,74 @@ const useCommonStyles = makeStyles((theme) => ({
     margin: "auto",
     width: "90%",
   },
+  table: {
+    overflowX: "auto",
+    "& table": {
+      borderCollapse: "separate",
+      borderSpacing: "0 20px",
+      "& thead": {
+        "& tr": {
+          "& th": {
+            borderBottom: "none",
+            color: transparentize(0.5, theme.colors.default),
+            fontSize: 20,
+            lineHeight: "26px",
+          },
+        },
+      },
+      "& tbody": {
+        "& tr": {
+          cursor: "pointer",
+          transition: "all 0.3s",
+          "&:hover": {
+            opacity: 0.7,
+          },
+          "& td": {
+            borderBottom: "none",
+            backgroundColor: theme.colors.primary,
+            fontSize: 20,
+            lineHeight: "26px",
+            "& span": {
+              borderRadius: 2,
+              display: "inline-flex",
+              alignItems: "center",
+              padding: "9px 16px",
+            },
+          },
+          "&.positive": {
+            "& td": {
+              "&:first-child": {
+                borderLeft: `5px solid ${theme.colors.success}`,
+                borderRadius: "4px 0 0 4px",
+              },
+              "&:last-child": {
+                borderRadius: "0 4px 4px 0",
+              },
+            },
+            "& span": {
+              color: theme.colors.success,
+              backgroundColor: transparentize(0.8, theme.colors.success),
+            },
+          },
+          "&.negative": {
+            "& td": {
+              "&:first-child": {
+                borderLeft: `5px solid ${theme.colors.warn}`,
+                borderRadius: "4px 0 0 4px",
+              },
+              "&:last-child": {
+                borderRadius: "0 4px 4px 0",
+              },
+            },
+            "& span": {
+              color: theme.colors.warn,
+              backgroundColor: transparentize(0.8, theme.colors.warn),
+            },
+          },
+        },
+      },
+    },
+  },
 }));
 
 export default useCommonStyles;
