@@ -6,6 +6,7 @@ import useCommonStyles from "styles/common";
 import {
   AboutSection,
   InvestmentHistorySection,
+  MainSection,
   TokenDistributionSection,
   WhitelistSection,
 } from "./components";
@@ -33,6 +34,7 @@ const PoolDetailsPage = () => {
     <div className={clsx(classes.root, commonClasses.limitedContent)}>
       <Typography className={classes.title}>COOK 100</Typography>
       <div className={classes.content}>
+        <MainSection className={classes.section} />
         <AboutSection className={classes.section} />
         <TokenDistributionSection className={classes.section} />
         <WhitelistSection className={classes.section} />
