@@ -14,11 +14,14 @@ import {
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
 import clsx from "clsx";
-import React, { useState } from "react";
+import { getUniswapGraph } from "config/network";
+import { useConnectedWeb3Context } from "contexts";
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import useCommonStyles from "styles/common";
 import { IPool } from "types";
 import { numberWithCommas } from "utils";
+import { fetchQuery } from "utils/graphql";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -84,6 +87,43 @@ const mockPools: IPool[] = [
   },
 ];
 
+const typeFilters = [
+  { label: "Spot Composite", value: "spot-composite" },
+  { label: "Smart Contract", value: "smart-contract" },
+  { label: "Stablecoins", value: "stablecoins" },
+];
+const platformFilters = [
+  { label: "Ethereum", value: "ethereum" },
+  { label: "Polkadot", value: "polkadot" },
+  { label: "Binance Smart Chain", value: "bsc" },
+  { label: "Huobi Eco Chain", value: "hec" },
+];
+const tokenFilters = [
+  { label: "ETH", value: "eth" },
+  { label: "BTC", value: "btc" },
+  { label: "LINK", value: "link" },
+  { label: "USDT", value: "usdt" },
+  { label: "BNB", value: "bnb" },
+];
+
+const query = `query GetTopPairs() {
+  pairs(orderBy:volumeUSD, orderDirection: desc, first:10) {
+    id
+    token0 {
+      name
+    }
+    token1 {
+      name
+    }
+    token0Price
+    token1Price
+    volumeUSD
+    volumeToken0
+    volumeToken1
+  }
+}
+`;
+
 interface IState {
   filter: {
     type: string;
@@ -96,10 +136,21 @@ export const PoolsSection = () => {
   const classes = useStyles();
   const commonClasses = useCommonStyles();
   const history = useHistory();
+  const { networkId } = useConnectedWeb3Context();
 
   const [state, setState] = useState<IState>({
     filter: { type: "", platform: "", token: "" },
   });
+
+  const uniswapTheGraph = getUniswapGraph(networkId || 1);
+
+  useEffect(() => {
+    const loadUniswapInfo = async () => {
+      const response = await fetchQuery(query, {}, uniswapTheGraph.httpUri);
+      console.log(response);
+    };
+    loadUniswapInfo();
+  }, []);
 
   const onChangeFilter = (key: string) => (
     event: React.ChangeEvent<{
@@ -127,9 +178,11 @@ export const PoolsSection = () => {
             onChange={onChangeFilter("type")}
             value={state.filter.type}
           >
-            <MenuItem value="Type1">Type1</MenuItem>
-            <MenuItem value="Type2">Type2</MenuItem>
-            <MenuItem value="Type3">Type3</MenuItem>
+            {typeFilters.map((item) => (
+              <MenuItem key={item.value} value={item.value}>
+                {item.label}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
         <FormControl className={classes.filterControl} variant="outlined">
@@ -143,9 +196,11 @@ export const PoolsSection = () => {
             onChange={onChangeFilter("platform")}
             value={state.filter.platform}
           >
-            <MenuItem value="Platform1">Platform1</MenuItem>
-            <MenuItem value="Platform2">Platform2</MenuItem>
-            <MenuItem value="Platform3">Platform3</MenuItem>
+            {platformFilters.map((item) => (
+              <MenuItem key={item.value} value={item.value}>
+                {item.label}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
         <FormControl className={classes.filterControl} variant="outlined">
@@ -159,9 +214,11 @@ export const PoolsSection = () => {
             onChange={onChangeFilter("token")}
             value={state.filter.token}
           >
-            <MenuItem value="Token1">Token1</MenuItem>
-            <MenuItem value="Token2">Token2</MenuItem>
-            <MenuItem value="Token3">Token3</MenuItem>
+            {tokenFilters.map((item) => (
+              <MenuItem key={item.value} value={item.value}>
+                {item.label}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
       </div>
