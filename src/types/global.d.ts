@@ -25,6 +25,8 @@ export interface IToken {
   decimals: number;
   symbol: string;
   image?: string;
+  pairAddress: string;
+  name: string;
 }
 
 export interface IFeaturedLiquidityPool {
@@ -53,4 +55,12 @@ export interface ITokenDistribution {
   value: number;
   portfolio: number;
   returns24h: number;
+}
+
+export type KnownToken = "btc" | "eth" | "link" | "xrp" | "ltc" | "dot";
+
+export interface IKnownTokenData {
+  name: string;
+  symbol: string;
+  pairAddresses: { [key in NetworkId]: string };
 }

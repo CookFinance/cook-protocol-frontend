@@ -72,3 +72,13 @@ export const waitSeconds = (sec = 2): Promise<void> =>
       resolve();
     }, sec * 1000);
   });
+
+export const getDecimalsLimitedString = (
+  str: string,
+  decimals?: number
+): string => {
+  const d = decimals || 18;
+  const splits = str.split(".");
+  if (splits.length === 1 || splits[1].length < d) return str;
+  return [splits[0], splits[1].substr(0, d)].join(".");
+};

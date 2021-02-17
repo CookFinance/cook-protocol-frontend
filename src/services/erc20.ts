@@ -126,26 +126,6 @@ class ERC20Service {
     }
   };
 
-  getProfileSummary = async (): Promise<IToken> => {
-    let decimals;
-    let symbol;
-    try {
-      [decimals, symbol] = await Promise.all([
-        this.contract.decimals(),
-        this.contract.symbol(),
-      ]);
-    } catch {
-      decimals = 18;
-      symbol = "MKR";
-    }
-
-    return {
-      address: this.contract.address,
-      decimals,
-      symbol,
-    };
-  };
-
   static encodeTransferFrom = (
     from: string,
     to: string,

@@ -14,14 +14,16 @@ import {
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
 import clsx from "clsx";
-import { getUniswapGraph } from "config/network";
+import { getToken, getUniswapGraph } from "config/network";
 import { useConnectedWeb3Context } from "contexts";
+import { BigNumber } from "ethers";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import useCommonStyles from "styles/common";
-import { IPool } from "types";
-import { numberWithCommas } from "utils";
-import { fetchQuery } from "utils/graphql";
+import { IPool, KnownToken } from "types";
+import { formatBigNumber, numberWithCommas } from "utils";
+import { ZERO_NUMBER } from "utils/number";
+import { getTokenPrice } from "utils/uniswap";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -106,23 +108,14 @@ const tokenFilters = [
   { label: "BNB", value: "bnb" },
 ];
 
-const query = `query GetTopPairs() {
-  pairs(orderBy:volumeUSD, orderDirection: desc, first:10) {
-    id
-    token0 {
-      name
-    }
-    token1 {
-      name
-    }
-    token0Price
-    token1Price
-    volumeUSD
-    volumeToken0
-    volumeToken1
-  }
-}
-`;
+const defaultTokenPrices: { [K in KnownToken]: BigNumber } = {
+  btc: ZERO_NUMBER,
+  eth: ZERO_NUMBER,
+  link: ZERO_NUMBER,
+  ltc: ZERO_NUMBER,
+  dot: ZERO_NUMBER,
+  xrp: ZERO_NUMBER,
+};
 
 interface IState {
   filter: {
@@ -130,6 +123,8 @@ interface IState {
     platform: string;
     token: string;
   };
+  tokenPrices: { [K in KnownToken]: BigNumber };
+  prevDayTokenPrices: { [K in KnownToken]: BigNumber };
 }
 
 export const PoolsSection = () => {
@@ -140,14 +135,37 @@ export const PoolsSection = () => {
 
   const [state, setState] = useState<IState>({
     filter: { type: "", platform: "", token: "" },
+    tokenPrices: defaultTokenPrices,
+    prevDayTokenPrices: defaultTokenPrices,
   });
 
   const uniswapTheGraph = getUniswapGraph(networkId || 1);
 
   useEffect(() => {
+    const loadUniswapInfoBeforeTimeStamp = async (
+      timestamp: number
+    ): Promise<{ [K in KnownToken]: BigNumber }> => {
+      const tokenPrices = defaultTokenPrices;
+      const ethToken = getToken(networkId || 1, "eth");
+      const ethPrice = await getTokenPrice(
+        uniswapTheGraph.httpUri,
+        ethToken.pairAddress,
+        timestamp
+      );
+      tokenPrices.eth = ethPrice;
+      return tokenPrices;
+    };
     const loadUniswapInfo = async () => {
-      const response = await fetchQuery(query, {}, uniswapTheGraph.httpUri);
-      console.log(response);
+      try {
+        const curTimeStamp = Date.now();
+        const tokenPrices = await loadUniswapInfoBeforeTimeStamp(curTimeStamp);
+        const prevDayTokenPrices = await loadUniswapInfoBeforeTimeStamp(
+          curTimeStamp - 24 * 60 * 60 * 1000
+        );
+        setState((prev) => ({ ...prev, tokenPrices, prevDayTokenPrices }));
+      } catch (error) {
+        console.warn(error);
+      }
     };
     loadUniswapInfo();
   }, []);
