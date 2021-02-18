@@ -14,15 +14,17 @@ import {
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
 import clsx from "clsx";
+import { TOKEN_DECIMALS } from "config/constants";
 import { getToken, getUniswapGraph } from "config/network";
 import { useConnectedWeb3Context } from "contexts";
 import { BigNumber } from "ethers";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import useCommonStyles from "styles/common";
-import { IPool, KnownToken } from "types";
+import { ICoinPrices, IPool, KnownToken } from "types";
 import { formatBigNumber, numberWithCommas } from "utils";
 import { ZERO_NUMBER } from "utils/number";
+import { calculateValuation, getCoinsPrices } from "utils/token";
 import { getTokenPrice } from "utils/uniswap";
 
 const useStyles = makeStyles((theme) => ({
@@ -62,31 +64,37 @@ const mockPools: IPool[] = [
     address: "123",
     name: "COOK 10",
     symbol: "COOK100",
-    price: 625,
-    returns24h: 25,
-    valuation: 2600000,
     assetType: "Spot - Composite",
+    ckTokens: BigNumber.from("100000"),
+    tokens: {
+      btc: BigNumber.from("100"),
+      eth: BigNumber.from("700"),
+      xrp: BigNumber.from("312000"),
+      link: BigNumber.from("4333"),
+      ltc: BigNumber.from("433"),
+      dot: BigNumber.from("4622"),
+    },
   },
-  {
-    id: "12",
-    address: "1233",
-    name: "Liquidity Pool",
-    symbol: "DSC",
-    price: 150,
-    returns24h: -2,
-    valuation: 12500000,
-    assetType: "Smart Contract",
-  },
-  {
-    id: "13",
-    address: "1234",
-    name: "DeFi Liquidity Pool",
-    symbol: "DEFILEND",
-    price: 120,
-    returns24h: 15,
-    valuation: 15500000,
-    assetType: "Lending, Stablecoins",
-  },
+  // {
+  //   id: "12",
+  //   address: "1233",
+  //   name: "Liquidity Pool",
+  //   symbol: "DSC",
+  //   price: 150,
+  //   returns24h: -2,
+  //   valuation: 12500000,
+  //   assetType: "Smart Contract",
+  // },
+  // {
+  //   id: "13",
+  //   address: "1234",
+  //   name: "DeFi Liquidity Pool",
+  //   symbol: "DEFILEND",
+  //   price: 120,
+  //   returns24h: 15,
+  //   valuation: 15500000,
+  //   assetType: "Lending, Stablecoins",
+  // },
 ];
 
 const typeFilters = [
@@ -108,13 +116,23 @@ const tokenFilters = [
   { label: "BNB", value: "bnb" },
 ];
 
-const defaultTokenPrices: { [K in KnownToken]: BigNumber } = {
-  btc: ZERO_NUMBER,
-  eth: ZERO_NUMBER,
-  link: ZERO_NUMBER,
-  ltc: ZERO_NUMBER,
-  dot: ZERO_NUMBER,
-  xrp: ZERO_NUMBER,
+const defaultCoinPrices: ICoinPrices = {
+  current: {
+    eth: ZERO_NUMBER,
+    btc: ZERO_NUMBER,
+    link: ZERO_NUMBER,
+    xrp: ZERO_NUMBER,
+    ltc: ZERO_NUMBER,
+    dot: ZERO_NUMBER,
+  },
+  prev: {
+    eth: ZERO_NUMBER,
+    btc: ZERO_NUMBER,
+    link: ZERO_NUMBER,
+    xrp: ZERO_NUMBER,
+    ltc: ZERO_NUMBER,
+    dot: ZERO_NUMBER,
+  },
 };
 
 interface IState {
@@ -123,51 +141,25 @@ interface IState {
     platform: string;
     token: string;
   };
-  tokenPrices: { [K in KnownToken]: BigNumber };
-  prevDayTokenPrices: { [K in KnownToken]: BigNumber };
+  tokenPrices: ICoinPrices;
 }
 
 export const PoolsSection = () => {
   const classes = useStyles();
   const commonClasses = useCommonStyles();
   const history = useHistory();
-  const { networkId } = useConnectedWeb3Context();
 
   const [state, setState] = useState<IState>({
     filter: { type: "", platform: "", token: "" },
-    tokenPrices: defaultTokenPrices,
-    prevDayTokenPrices: defaultTokenPrices,
+    tokenPrices: defaultCoinPrices,
   });
 
-  const uniswapTheGraph = getUniswapGraph(networkId || 1);
-
   useEffect(() => {
-    const loadUniswapInfoBeforeTimeStamp = async (
-      timestamp: number
-    ): Promise<{ [K in KnownToken]: BigNumber }> => {
-      const tokenPrices = defaultTokenPrices;
-      const ethToken = getToken(networkId || 1, "eth");
-      const ethPrice = await getTokenPrice(
-        uniswapTheGraph.httpUri,
-        ethToken.pairAddress,
-        timestamp
-      );
-      tokenPrices.eth = ethPrice;
-      return tokenPrices;
+    const loadCoinPrices = async () => {
+      const prices = await getCoinsPrices();
+      setState((prev) => ({ ...prev, tokenPrices: prices }));
     };
-    const loadUniswapInfo = async () => {
-      try {
-        const curTimeStamp = Date.now();
-        const tokenPrices = await loadUniswapInfoBeforeTimeStamp(curTimeStamp);
-        const prevDayTokenPrices = await loadUniswapInfoBeforeTimeStamp(
-          curTimeStamp - 24 * 60 * 60 * 1000
-        );
-        setState((prev) => ({ ...prev, tokenPrices, prevDayTokenPrices }));
-      } catch (error) {
-        console.warn(error);
-      }
-    };
-    loadUniswapInfo();
+    loadCoinPrices();
   }, []);
 
   const onChangeFilter = (key: string) => (
@@ -254,30 +246,57 @@ export const PoolsSection = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {mockPools.map((pool) => (
-                <TableRow
-                  className={clsx(
-                    pool.returns24h < 0 ? "negative" : "positive"
-                  )}
-                  key={pool.id}
-                  onClick={() => {
-                    history.push(`/pool/${pool.id}`);
-                  }}
-                >
-                  <TableCell>{pool.name}</TableCell>
-                  <TableCell>{pool.symbol}</TableCell>
-                  <TableCell>${numberWithCommas(pool.price)}</TableCell>
-                  <TableCell>
-                    <span>
-                      {pool.returns24h < 0 && <ArrowDropDownIcon />}
-                      {pool.returns24h >= 0 && <ArrowDropUpIcon />}
-                      {pool.returns24h}%
-                    </span>
-                  </TableCell>
-                  <TableCell>{pool.valuation}</TableCell>
-                  <TableCell>{pool.assetType}</TableCell>
-                </TableRow>
-              ))}
+              {mockPools.map((pool) => {
+                const curValuation = calculateValuation(
+                  state.tokenPrices.current,
+                  pool.tokens
+                );
+                const prevValuation = calculateValuation(
+                  state.tokenPrices.prev,
+                  pool.tokens
+                );
+
+                const difference = curValuation
+                  .sub(prevValuation)
+                  .mul(BigNumber.from("1000"));
+
+                const return24hBigNumber = prevValuation.isZero()
+                  ? ZERO_NUMBER
+                  : difference.div(prevValuation);
+
+                const returns24h =
+                  Number(formatBigNumber(return24hBigNumber, 0, 3)) / 1000;
+
+                const price = curValuation.div(pool.ckTokens);
+
+                return (
+                  <TableRow
+                    className={clsx(returns24h < 0 ? "negative" : "positive")}
+                    key={pool.id}
+                    onClick={() => {
+                      history.push(`/pool/${pool.id}`);
+                    }}
+                  >
+                    <TableCell>{pool.name}</TableCell>
+                    <TableCell>{pool.symbol}</TableCell>
+                    <TableCell>
+                      $
+                      {numberWithCommas(formatBigNumber(price, TOKEN_DECIMALS))}
+                    </TableCell>
+                    <TableCell>
+                      <span>
+                        {returns24h < 0 && <ArrowDropDownIcon />}
+                        {returns24h >= 0 && <ArrowDropUpIcon />}
+                        {returns24h}%
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      {formatBigNumber(curValuation, TOKEN_DECIMALS)}
+                    </TableCell>
+                    <TableCell>{pool.assetType}</TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </div>

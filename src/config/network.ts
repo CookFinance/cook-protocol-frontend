@@ -48,55 +48,34 @@ const networks: { [K in NetworkId]: INetwork } = {
 
 const knownTokens: { [K in KnownToken]: IKnownTokenData } = {
   btc: {
-    name: "Wrapped BTC",
-    symbol: "WBTC",
-    pairAddresses: {
-      // wBTC - ETH
-      [networkIds.MAINNET]: "0xbb2b8038a1640196fbe3e38816f3e67cba72d940",
-      [networkIds.KOVAN]: "0xbb2b8038a1640196fbe3e38816f3e67cba72d940",
-    },
+    name: "Bitcoin",
+    symbol: "btc",
+    coingeckoId: "bitcoin",
   },
   eth: {
-    name: "Ether (Wrapped)",
-    symbol: "WETH",
-    pairAddresses: {
-      // USDC - ETH
-      [networkIds.MAINNET]: "0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc",
-      [networkIds.KOVAN]: "0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc",
-    },
+    name: "Ethereum",
+    symbol: "eth",
+    coingeckoId: "ethereum",
   },
   link: {
-    name: "ChainLink Token",
-    symbol: "LINK",
-    pairAddresses: {
-      // LINK - ETH
-      [networkIds.MAINNET]: "0xa2107fa5b38d9bbd2c461d6edf11b11a50f6b974",
-      [networkIds.KOVAN]: "0xa2107fa5b38d9bbd2c461d6edf11b11a50f6b974",
-    },
+    name: "Chainlink",
+    symbol: "link",
+    coingeckoId: "chainlink",
   },
   xrp: {
     name: "XRP",
     symbol: "xrp",
-    pairAddresses: {
-      [networkIds.MAINNET]: "0x004375dff511095cc5a197a54140a24efef3a416",
-      [networkIds.KOVAN]: "0x004375dff511095cc5a197a54140a24efef3a416",
-    },
+    coingeckoId: "ripple",
   },
   ltc: {
     name: "Litecoin",
-    symbol: "LTC",
-    pairAddresses: {
-      [networkIds.MAINNET]: "0x004375dff511095cc5a197a54140a24efef3a416",
-      [networkIds.KOVAN]: "0x004375dff511095cc5a197a54140a24efef3a416",
-    },
+    symbol: "ltc",
+    coingeckoId: "litecoin",
   },
   dot: {
     name: "Polkadot",
-    symbol: "DOT",
-    pairAddresses: {
-      [networkIds.MAINNET]: "0x004375dff511095cc5a197a54140a24efef3a416",
-      [networkIds.KOVAN]: "0x004375dff511095cc5a197a54140a24efef3a416",
-    },
+    symbol: "dot",
+    coingeckoId: "polkadot",
   },
 };
 
@@ -136,10 +115,7 @@ export const getUniswapGraph = (
   return networks[networkId].uniswapGraph;
 };
 
-export const getToken = (networkId: number, tokenId: KnownToken): IToken => {
-  if (!validNetworkId(networkId)) {
-    throw new Error(`Unsupported network id: '${networkId}'`);
-  }
+export const getToken = (tokenId: KnownToken): IToken => {
   const token = knownTokens[tokenId];
   if (!token) {
     throw new Error(`Unsupported token id: '${tokenId}'`);
@@ -147,7 +123,7 @@ export const getToken = (networkId: number, tokenId: KnownToken): IToken => {
   return {
     name: token.name,
     symbol: token.symbol,
-    pairAddress: token.pairAddresses[networkId],
+    coingeckoId: token.coingeckoId,
     decimals: 18,
     address: "",
   };

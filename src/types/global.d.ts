@@ -1,3 +1,4 @@
+import { BigNumber } from "ethers";
 import { THEME } from "./enums";
 
 export type Maybe<T> = T | null;
@@ -25,7 +26,7 @@ export interface IToken {
   decimals: number;
   symbol: string;
   image?: string;
-  pairAddress: string;
+  coingeckoId: string;
   name: string;
 }
 
@@ -43,10 +44,9 @@ export interface IPool {
   address: string;
   name: string;
   symbol: string;
-  price: number;
-  returns24h: number;
-  valuation: number;
   assetType: string;
+  ckTokens: BigNumber;
+  tokens: { [key: string]: BigNumber };
 }
 
 export interface ITokenDistribution {
@@ -62,5 +62,10 @@ export type KnownToken = "btc" | "eth" | "link" | "xrp" | "ltc" | "dot";
 export interface IKnownTokenData {
   name: string;
   symbol: string;
-  pairAddresses: { [key in NetworkId]: string };
+  coingeckoId: string;
+}
+
+export interface ICoinPrices {
+  current: { [key in KnownToken]: BigNumber };
+  prev: { [key in KnownToken]: BigNumber };
 }
