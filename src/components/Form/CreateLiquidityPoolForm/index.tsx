@@ -10,6 +10,7 @@ import clsx from "clsx";
 import { Form, Formik } from "formik";
 import { transparentize } from "polished";
 import React from "react";
+import { ICreateLiquidityPool } from "types";
 import * as Yup from "yup";
 
 import {
@@ -95,20 +96,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export interface ICreateLiquidityPoolFormValues {
-  name: string;
-  symbol: string;
-  about: string;
-  fee: number;
-  acceptedTokens: string[];
-  liquidityPoolType: string;
-  platformWhitelist: string[];
-  tokenWhitelist: string[];
-  allowLeverage: string;
+export interface ICreateLiquidityPoolFormValues extends ICreateLiquidityPool {
   accepted: boolean;
 }
 
-const CreateLiquidityPoolForm = () => {
+export interface IProps {
+  onSubmit: (_: ICreateLiquidityPool) => void;
+}
+
+const CreateLiquidityPoolForm = (props: IProps) => {
   const classes = useStyles();
   const initialFormValue: ICreateLiquidityPoolFormValues = {
     name: "",
@@ -127,7 +123,10 @@ const CreateLiquidityPoolForm = () => {
     <div className={classes.root}>
       <Formik
         initialValues={initialFormValue}
-        onSubmit={async (values, { setErrors }) => {}}
+        onSubmit={async (values, { setErrors }) => {
+          console.log("-=-=-=-=");
+          props.onSubmit(values);
+        }}
         validationSchema={Yup.object().shape({
           name: Yup.string().required(),
           symbol: Yup.string().required(),
@@ -454,7 +453,8 @@ const CreateLiquidityPoolForm = () => {
             <Button
               className={classes.submit}
               color="primary"
-              disabled={!values.accepted}
+              disabled={!values.accepted || !isValid}
+              type="submit"
               variant="contained"
             >
               Create

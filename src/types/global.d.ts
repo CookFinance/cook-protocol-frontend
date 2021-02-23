@@ -11,10 +11,6 @@ export interface ISettings {
 export interface INetwork {
   label: string;
   url: string;
-  uniswapGraph: {
-    httpUri: string;
-    wsUri: string;
-  };
   contracts: {};
   etherscanUri: string;
 }
@@ -68,4 +64,20 @@ export interface IKnownTokenData {
 export interface ICoinPrices {
   current: { [key in KnownToken]: BigNumber };
   prev: { [key in KnownToken]: BigNumber };
+}
+
+export interface ICreateLiquidityPool {
+  name: string;
+  symbol: string;
+  about: string;
+  fee: number;
+  acceptedTokens: string[];
+  liquidityPoolType: string;
+  platformWhitelist: string[];
+  tokenWhitelist: string[];
+  allowLeverage: string;
+}
+
+export interface IGlobalData {
+  createdPools: ICreateLiquidityPool[];
 }

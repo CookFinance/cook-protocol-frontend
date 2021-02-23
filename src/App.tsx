@@ -1,7 +1,7 @@
 import { Web3Provider } from "@ethersproject/providers";
 import { ThemeProvider } from "@material-ui/styles";
 import { Web3ReactProvider } from "@web3-react/core";
-import { ConnectedWeb3, useSettings } from "contexts";
+import { ConnectedWeb3, GlobalProvider, useSettings } from "contexts";
 import React from "react";
 import { BrowserRouter } from "react-router-dom";
 import routes, { renderRoutes } from "routes";
@@ -21,7 +21,9 @@ function App() {
     <ThemeProvider theme={theme}>
       <Web3ReactProvider getLibrary={getLibrary}>
         <ConnectedWeb3>
-          <BrowserRouter>{renderRoutes(routes as any)}</BrowserRouter>
+          <GlobalProvider>
+            <BrowserRouter>{renderRoutes(routes as any)}</BrowserRouter>
+          </GlobalProvider>
         </ConnectedWeb3>
       </Web3ReactProvider>
     </ThemeProvider>

@@ -15,17 +15,14 @@ import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
 import clsx from "clsx";
 import { TOKEN_DECIMALS } from "config/constants";
-import { getToken, getUniswapGraph } from "config/network";
-import { useConnectedWeb3Context } from "contexts";
 import { BigNumber } from "ethers";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import useCommonStyles from "styles/common";
-import { ICoinPrices, IPool, KnownToken } from "types";
+import { ICoinPrices, IPool } from "types";
 import { formatBigNumber, numberWithCommas } from "utils";
 import { ZERO_NUMBER } from "utils/number";
 import { calculateValuation, getCoinsPrices } from "utils/token";
-import { getTokenPrice } from "utils/uniswap";
 
 const useStyles = makeStyles((theme) => ({
   root: {
