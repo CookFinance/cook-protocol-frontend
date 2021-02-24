@@ -3,13 +3,18 @@ import clsx from "clsx";
 import React from "react";
 import useCommonStyles from "styles/common";
 
-import { Header } from "./components";
+import { Header, Navbar } from "./components";
 
 const useStyles = makeStyles((theme) => ({
-  root: { paddingTop: theme.custom.appHeaderHeight, height: "100vh" },
+  root: {
+    paddingTop: theme.custom.appHeaderHeight,
+    height: "100vh",
+    paddingLeft: theme.custom.appNavbarWidth,
+  },
   content: {
+    paddingLeft: 1,
     height: "100%",
-    background: `radial-gradient(${theme.colors.primary}, ${theme.colors.secondary})`,
+    background: theme.colors.default,
     overflowY: "auto",
   },
 }));
@@ -24,6 +29,7 @@ export const MainLayout = (props: IProps) => {
   return (
     <div className={classes.root}>
       <Header />
+      <Navbar />
       <main className={clsx(classes.content, commonClasses.scroll)}>
         {props.children}
       </main>

@@ -5,7 +5,7 @@ import { ISettings } from "types";
 import { THEME } from "types/enums";
 
 const defaultSettings: ISettings = {
-  theme: THEME.Black,
+  theme: THEME.White,
   responsiveFontSizes: true,
 };
 

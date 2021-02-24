@@ -64,9 +64,7 @@ const useCommonStyles = makeStyles((theme) => ({
     },
   },
   limitedContent: {
-    maxWidth: theme.custom.appHeaderContentMaxWidth,
     margin: "auto",
-    width: "90%",
   },
   table: {
     overflowX: "auto",

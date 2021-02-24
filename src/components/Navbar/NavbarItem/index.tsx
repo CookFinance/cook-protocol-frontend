@@ -6,36 +6,23 @@ const useStyles = makeStyles((theme) => ({
   root: {
     textDecoration: "none",
     color: theme.colors.reverse,
-    fontSize: 24,
-    position: "relative",
+    height: 24,
     transition: "all 0.5s",
-    height: "100%",
     display: "flex",
-    justifyContent: "center",
     alignItems: "center",
-    padding: "0 12px",
-    "&::after": {
-      transition: "all 0.5s",
-      position: "absolute",
-      content: `" "`,
-      left: 0,
-      right: 0,
-      top: 0,
-      height: 3,
-      backgroundColor: theme.colors.transparent,
-      borderRadius: 2,
+    fontSize: 16,
+    lineHeight: "24px",
+    "& svg": {
+      marginRight: 16,
     },
     "&:hover": {
       opacity: 0.7,
-      "&::after": {
-        backgroundColor: theme.colors.reverse,
-      },
     },
     "&.active": {
-      opacity: 1,
-      "&::after": {
-        backgroundColor: theme.colors.reverse,
-      },
+      color: theme.colors.reverse,
+    },
+    "& + &": {
+      marginTop: 24,
     },
   },
 }));
@@ -43,19 +30,19 @@ const useStyles = makeStyles((theme) => ({
 interface IProps {
   title: string;
   link: string;
+  icon: React.ElementType;
 }
 
-const HeaderNavbarItem = (props: IProps) => {
+export const NavbarItem = (props: IProps) => {
   const classes = useStyles();
-  const { link, title } = props;
+  const { icon: Icon, link, title } = props;
   const history = useHistory();
   const isActive = () =>
     !!matchPath(history.location.pathname, { path: link, exact: false });
   return (
     <NavLink className={classes.root} isActive={isActive} to={link}>
+      <Icon />
       {title}
     </NavLink>
   );
 };
-
-export default HeaderNavbarItem;

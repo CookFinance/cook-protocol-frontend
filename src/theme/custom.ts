@@ -1,6 +1,6 @@
 const custom = {
-  appHeaderHeight: 93,
-  appHeaderContentMaxWidth: 1600,
+  appHeaderHeight: 72,
+  appNavbarWidth: 168,
 };
 
 export default custom;

@@ -4,7 +4,7 @@ declare module "@material-ui/core/styles/createMuiTheme" {
   interface Theme {
     custom: {
       appHeaderHeight: React.CSSProperties["height"];
-      appHeaderContentMaxWidth: React.CSSProperties["height"];
+      appNavbarWidth: React.CSSProperties["width"];
     };
     colors: {
       transparent: string;
@@ -13,6 +13,9 @@ declare module "@material-ui/core/styles/createMuiTheme" {
       primary: string;
       secondary: string;
       third: string;
+      fourth: string;
+      gray10: string;
+      gray20: string;
       warn: string;
       success: string;
     };
@@ -21,7 +24,7 @@ declare module "@material-ui/core/styles/createMuiTheme" {
   interface ThemeOptions {
     custom: {
       appHeaderHeight: React.CSSProperties["height"];
-      appHeaderContentMaxWidth: React.CSSProperties["height"];
+      appNavbarWidth: React.CSSProperties["width"];
     };
     colors: {
       transparent: string;
@@ -30,6 +33,9 @@ declare module "@material-ui/core/styles/createMuiTheme" {
       primary: string;
       secondary: string;
       third: string;
+      fourth: string;
+      gray10: string;
+      gray20: string;
       warn: string;
       success: string;
     };

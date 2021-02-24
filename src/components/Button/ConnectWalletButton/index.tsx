@@ -4,16 +4,19 @@ import React from "react";
 
 const useStyles = makeStyles((theme) => ({
   root: {
+    height: 58,
+    backgroundColor: theme.colors.default,
+    border: `1px solid ${theme.colors.gray20}`,
+    "& span": { flex: 1, textAlign: "left" },
     "& svg": {
-      height: theme.spacing(3),
-      width: theme.spacing(3),
-      marginRight: theme.spacing(1),
+      height: theme.spacing(3.5),
+      width: theme.spacing(3.5),
     },
   },
   label: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "flex-start",
+    textTransform: "none",
+    fontSize: 16,
+    lineHeight: "19px",
   },
 }));
 
@@ -22,12 +25,12 @@ interface IProps {
   onClick: () => void;
   disabled?: boolean;
   text: string;
-  icon: React.ReactNode;
+  icon: React.ElementType;
 }
 
 export const ConnectWalletButton = (props: IProps) => {
   const classes = useStyles();
-  const { disabled = false, icon, onClick, text } = props;
+  const { disabled = false, icon: Icon, onClick, text } = props;
   return (
     <Button
       className={clsx(classes.root, props.className)}
@@ -37,8 +40,9 @@ export const ConnectWalletButton = (props: IProps) => {
       onClick={onClick}
       variant="contained"
     >
-      {icon}
-      {text}
+      <span>{text}</span>
+
+      <Icon />
     </Button>
   );
 };

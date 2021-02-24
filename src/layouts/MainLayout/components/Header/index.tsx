@@ -4,7 +4,6 @@ import clsx from "clsx";
 import HeaderNavbarItem from "components/Header/HeaderNavbarItem";
 import React from "react";
 import { NavLink } from "react-router-dom";
-import useCommonStyles from "styles/common";
 
 import { AccountInfoBar } from "../AccountInfoBar";
 
@@ -15,50 +14,51 @@ const useStyles = makeStyles((theme) => ({
     right: 0,
     top: 0,
     height: theme.custom.appHeaderHeight,
-    backgroundColor: theme.colors.secondary,
-    boxShadow: "0px 10px 14.696px rgba(48, 44, 51, 0.28)",
+    backgroundColor: theme.colors.default,
+    borderBottom: `1px solid ${theme.colors.third}`,
   },
   content: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
     height: "100%",
+    padding: "0 24px",
   },
   logo: {
-    height: theme.spacing(6),
+    height: theme.spacing(3.5),
+    marginLeft: theme.spacing(2),
   },
   navItems: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    minWidth: 400,
-    maxWidth: 700,
-    width: "44%",
+    marginLeft: 80,
+    height: "100%",
+    "& > * + *": {
+      marginLeft: 24,
+    },
   },
-  leftSpace: {
+  space: {
     flex: 1,
   },
-  rightSpace: { flex: 2 },
 }));
 
 export const Header = () => {
   const classes = useStyles();
-  const commonClasses = useCommonStyles();
 
   return (
     <div className={classes.root}>
-      <div className={clsx(classes.content, commonClasses.limitedContent)}>
-        <NavLink to="/">
+      <div className={clsx(classes.content)}>
+        <NavLink className={classes.logo} to="/">
           <LogoSVG />
         </NavLink>
-        <div className={classes.leftSpace} />
         <div className={classes.navItems}>
           <HeaderNavbarItem link="/pool" title="Pool" />
           <HeaderNavbarItem link="/create" title="Create" />
           <HeaderNavbarItem link="/mining" title="Mining" />
           <HeaderNavbarItem link="/governance" title="Governance" />
         </div>
-        <div className={classes.rightSpace} />
+        <div className={classes.space} />
         <AccountInfoBar />
       </div>
     </div>

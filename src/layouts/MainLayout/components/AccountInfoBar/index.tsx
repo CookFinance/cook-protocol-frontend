@@ -1,10 +1,6 @@
-import {
-  Avatar,
-  Button,
-  Popover,
-  Typography,
-  makeStyles,
-} from "@material-ui/core";
+import { Button, Popover, Typography, makeStyles } from "@material-ui/core";
+import ExpandLessIcon from "@material-ui/icons/ExpandLess";
+import clsx from "clsx";
 import { STORAGE_KEY_CONNECTOR } from "config/constants";
 import { useConnectedWeb3Context } from "contexts";
 import { transparentize } from "polished";
@@ -14,30 +10,52 @@ import { shortenAddress } from "utils";
 const useStyles = makeStyles((theme) => ({
   root: {},
   connectButton: {
-    borderColor: theme.colors.third,
-    height: 50,
+    backgroundColor: theme.colors.primary,
+    color: theme.colors.default,
+    height: 40,
     textTransform: "none",
-    fontSize: 18,
-    paddingLeft: 21,
-    paddingRight: 21,
-    borderRadius: 8,
+    fontSize: 16,
     position: "relative",
-  },
-  avatar: {
-    position: "absolute",
-    width: 64,
-    height: 64,
-    right: -32,
+    minWidth: 260,
   },
   popover: {
-    backgroundColor: transparentize(0.6, theme.colors.default),
-    padding: theme.spacing(0.5),
+    backgroundColor: theme.colors.default,
+    width: 160,
+    marginTop: 4,
+    border: `1px solid ${theme.colors.third}`,
+    padding: 16,
+    borderRadius: 0,
   },
   popoverButton: {
-    height: theme.spacing(5),
-    minWidth: 130,
     textTransform: "none",
-    fontSize: 18,
+    fontSize: 16,
+    height: 28,
+    display: "flex",
+    alignItems: "center",
+    color: theme.colors.secondary,
+    cursor: "pointer",
+    transition: "all 0.3s",
+    "&:hover": {
+      opacity: 0.7,
+    },
+  },
+  infoButton: {
+    width: 160,
+    height: 40,
+    fontSize: 16,
+    lineHeight: "28px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    "& span": {
+      textTransform: "none",
+    },
+  },
+  infoArrow: {
+    transition: "all 0.3s",
+    "&.open": {
+      transform: "rotate(180deg)",
+    },
   },
 }));
 
@@ -78,12 +96,16 @@ export const AccountInfoBar = () => {
       {account ? (
         <>
           <Button
-            className={classes.connectButton}
+            className={classes.infoButton}
+            color="secondary"
             onClick={handleClick}
             variant="outlined"
           >
             <Typography>{shortenAddress(account)}</Typography>
-            <Avatar className={classes.avatar} src="/assets/mock/avatar.png" />
+            &nbsp;
+            <ExpandLessIcon
+              className={clsx(classes.infoArrow, open ? "open" : "")}
+            />
           </Button>
           <Popover
             anchorEl={anchorEl}
@@ -102,26 +124,24 @@ export const AccountInfoBar = () => {
               horizontal: "right",
             }}
           >
-            <Button
+            <div
               className={classes.popoverButton}
-              color="primary"
               onClick={() => {
                 handleClose();
                 onDisconnect();
               }}
-              variant="contained"
             >
               Disconnect
-            </Button>
+            </div>
           </Popover>
         </>
       ) : (
         <Button
           className={classes.connectButton}
           onClick={onConnect}
-          variant="outlined"
+          variant="contained"
         >
-          Connect Wallet
+          Connect
         </Button>
       )}
     </div>

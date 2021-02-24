@@ -44,8 +44,12 @@ const themesOptions = [
       },
       MuiButton: {
         root: {
-          padding: "16px 25px 14px 25px",
-          borderRadius: "6px",
+          padding: "12px 16px",
+          borderRadius: "4px",
+          textTransform: "none",
+          "&:hover": {
+            backgroundColor: "#979CA3",
+          },
         },
       },
     },
@@ -61,14 +65,14 @@ const themesOptions = [
       },
       background: {
         default: "#030616",
-        dark: "#1c2025",
+        dark: "#000",
         paper: "#282C34",
       },
       primary: {
-        main: "#1F2645",
+        main: "#424242",
       },
       secondary: {
-        main: "#09092B",
+        main: "#7B8A95",
       },
       text: {
         primary: "#fff",
@@ -90,26 +94,35 @@ const themesOptions = [
       },
       MuiButton: {
         root: {
-          padding: "16px 25px 14px 25px",
-          borderRadius: "6px",
+          padding: "12px 16px",
+          borderRadius: "4px",
+          textTransform: "none",
+          "&:hover": {
+            backgroundColor: "#979CA3",
+          },
         },
       },
     },
     palette: {
       type: "light",
       action: {
-        active: colors.blueGrey[600],
+        active: "rgba(255, 255, 255, 0.54)",
+        hover: "rgba(255, 255, 255, 0.04)",
+        selected: "rgba(255, 255, 255, 0.08)",
+        disabled: "rgba(255, 255, 255, 0.26)",
+        disabledBackground: "rgba(255, 255, 255, 0.12)",
+        focus: "rgba(255, 255, 255, 0.12)",
       },
       background: {
         default: colors.common.white,
-        dark: "#f4f6f8",
+        dark: "#424242",
         paper: colors.common.white,
       },
       primary: {
-        main: "#fff",
+        main: "#424242",
       },
       secondary: {
-        main: "#fff",
+        main: "#7B8A95",
       },
       text: {
         primary: colors.blueGrey[900],

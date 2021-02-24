@@ -5,12 +5,11 @@ import {
   Typography,
   makeStyles,
 } from "@material-ui/core";
+import CloseIcon from "@material-ui/icons/Close";
 import { useWeb3React } from "@web3-react/core";
 import { WalletConnectConnector } from "@web3-react/walletconnect-connector";
-import { ReactComponent as MetaMaskIcon } from "assets/svgs/metamask-color.svg";
-import { ReactComponent as WalletConnectIcon } from "assets/svgs/wallet-connect.svg";
 import { ConnectWalletButton } from "components/Button";
-import { STORAGE_KEY_CONNECTOR } from "config/constants";
+import { STORAGE_KEY_CONNECTOR, WALLET_ICONS } from "config/constants";
 import { transparentize } from "polished";
 import React, { useCallback, useEffect } from "react";
 import { ConnectorNames } from "types/enums";
@@ -28,26 +27,34 @@ const useStyles = makeStyles((theme) => ({
   content: {
     outline: "none",
     backgroundColor: theme.colors.default,
-    minWidth: 350,
-    borderRadius: theme.spacing(1),
+    width: 400,
+    borderRadius: theme.spacing(0.5),
     padding: `${theme.spacing(2)}px 0`,
     userSelect: `none`,
+    position: "relative",
   },
   title: {
     color: theme.colors.secondary,
     padding: `0 ${theme.spacing(2)}px`,
     fontWeight: "bold",
     fontSize: theme.spacing(2.5),
-  },
-  divider: {
-    backgroundColor: transparentize(0.6, theme.colors.secondary),
-    marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2),
   },
   bottom: {
+    marginTop: theme.spacing(2),
     padding: `0 ${theme.spacing(2)}px`,
     textAlign: "center",
-    "& > * + *": { marginTop: theme.spacing(1.5) },
+    "& > * + *": { marginTop: theme.spacing(2) },
+  },
+  closeButton: {
+    position: "absolute",
+    top: 21,
+    right: 21,
+    width: 24,
+    height: 24,
+    color: theme.colors.fourth,
+    cursor: "pointer",
+    "& svg": { width: 24, height: 24 },
   },
 }));
 
@@ -133,10 +140,14 @@ export const ConnectWalletModal = (props: IProps) => {
         open={!context.account && props.visible}
       >
         <div className={classes.content}>
-          <Typography className={classes.title} component="h3">
-            {connectingToMetamask ? "Connecting..." : "Connect a wallet"}
+          {!isConnectingToWallet && (
+            <span className={classes.closeButton} onClick={onClose}>
+              <CloseIcon />
+            </span>
+          )}
+          <Typography align="center" className={classes.title} component="h3">
+            {connectingToMetamask ? "Connecting..." : "Connect"}
           </Typography>
-          <Divider className={classes.divider} />
           <div className={classes.bottom}>
             {isConnectingToWallet ? (
               <>
@@ -147,7 +158,7 @@ export const ConnectWalletModal = (props: IProps) => {
               <>
                 <ConnectWalletButton
                   disabled={disableMetamask}
-                  icon={<MetaMaskIcon />}
+                  icon={WALLET_ICONS[ConnectorNames.Injected]}
                   onClick={() => {
                     onClickWallet(ConnectorNames.Injected);
                   }}
@@ -155,11 +166,27 @@ export const ConnectWalletModal = (props: IProps) => {
                 />
                 <ConnectWalletButton
                   disabled={disableWalletConnect}
-                  icon={<WalletConnectIcon />}
+                  icon={WALLET_ICONS[ConnectorNames.WalletConnect]}
                   onClick={() => {
                     onClickWallet(ConnectorNames.WalletConnect);
                   }}
                   text="Wallet Connect"
+                />
+                <ConnectWalletButton
+                  disabled={disableWalletConnect}
+                  icon={WALLET_ICONS[ConnectorNames.WalletLink]}
+                  onClick={() => {
+                    onClickWallet(ConnectorNames.WalletLink);
+                  }}
+                  text="Coinbase Wallet"
+                />
+                <ConnectWalletButton
+                  disabled={disableWalletConnect}
+                  icon={WALLET_ICONS[ConnectorNames.Fortmatic]}
+                  onClick={() => {
+                    onClickWallet(ConnectorNames.Fortmatic);
+                  }}
+                  text="Fortmatic"
                 />
               </>
             )}
