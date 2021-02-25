@@ -6,6 +6,7 @@ import { ReactComponent as InvestIcon } from "assets/svgs/navbar/wallet.svg";
 import clsx from "clsx";
 import { NavbarItem } from "components";
 import React from "react";
+import { useHistory } from "react-router-dom";
 import useCommonStyles from "styles/common";
 
 const useStyles = makeStyles((theme) => ({
@@ -37,6 +38,11 @@ const useStyles = makeStyles((theme) => ({
 export const Navbar = () => {
   const classes = useStyles();
   const commonClasses = useCommonStyles();
+  const history = useHistory();
+
+  const onNewFund = () => {
+    history.push("/new-fund");
+  };
 
   return (
     <div className={clsx(classes.root, commonClasses.scroll)}>
@@ -45,6 +51,7 @@ export const Navbar = () => {
           className={classes.newFund}
           color="primary"
           fullWidth
+          onClick={onNewFund}
           variant="contained"
         >
           New fund+

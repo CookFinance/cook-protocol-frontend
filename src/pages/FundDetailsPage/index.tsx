@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const PoolDetailsPage = () => {
+const FundDetailsPage = () => {
   const classes = useStyles();
   const commonClasses = useCommonStyles();
 
@@ -44,4 +44,4 @@ const PoolDetailsPage = () => {
   );
 };
 
-export default PoolDetailsPage;
+export default FundDetailsPage;

@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
   root: {},
 }));
 
-const PoolPage = () => {
+const FundPage = () => {
   const classes = useStyles();
   const commonClasses = useCommonStyles();
   return (
@@ -26,4 +26,4 @@ const PoolPage = () => {
   );
 };
 
-export default PoolPage;
+export default FundPage;

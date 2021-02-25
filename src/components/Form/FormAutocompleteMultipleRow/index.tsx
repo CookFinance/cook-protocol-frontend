@@ -15,13 +15,6 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "row",
   },
-  formControlLabel: {
-    display: "inline-block",
-    color: transparentize(0.5, theme.colors.default),
-    fontSize: 24,
-    minWidth: 280,
-    marginTop: 32,
-  },
   formControlContent: {
     width: "40%",
     backgroundColor: theme.colors.secondary,
@@ -39,47 +32,24 @@ interface IProps {
   FormHelperTextProps: FormHelperTextProps;
   AutocompleteProps: AutocompleteProps<InputProps, true, false, false>;
   label: string;
-  labelWidth: React.CSSProperties["width"];
   helperText: string;
-  inputFullWidth?: boolean;
 }
 
 export const FormAutocompleteMultipleRow = (props: IProps) => {
   const classes = useStyles();
-  const {
-    AutocompleteProps,
-    FormHelperTextProps,
-    helperText,
-    inputFullWidth = false,
-    label,
-    labelWidth,
-  } = props;
+  const { AutocompleteProps, FormHelperTextProps, helperText, label } = props;
 
   return (
     <FormControl className={classes.formControl} fullWidth>
-      <label
-        className={classes.formControlLabel}
-        htmlFor={AutocompleteProps.id || ""}
-        style={{ minWidth: labelWidth, maxWidth: labelWidth }}
-      >
-        {label}
-      </label>
-      <div
-        className={clsx(
-          classes.formControlContent,
-          inputFullWidth ? "fullWidth" : ""
-        )}
-      >
-        <Autocomplete {...AutocompleteProps} />
-        {helperText && (
-          <FormHelperText
-            className={classes.formControlHelperText}
-            {...FormHelperTextProps}
-          >
-            {helperText}
-          </FormHelperText>
-        )}
-      </div>
+      <Autocomplete {...AutocompleteProps} />
+      {helperText && (
+        <FormHelperText
+          className={classes.formControlHelperText}
+          {...FormHelperTextProps}
+        >
+          {helperText}
+        </FormHelperText>
+      )}
     </FormControl>
   );
 };

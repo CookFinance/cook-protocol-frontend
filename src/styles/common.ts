@@ -66,6 +66,9 @@ const useCommonStyles = makeStyles((theme) => ({
   limitedContent: {
     margin: "auto",
   },
+  pageContent: {
+    padding: "32px 24px",
+  },
   table: {
     overflowX: "auto",
     "& table": {

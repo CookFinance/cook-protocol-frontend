@@ -3,30 +3,65 @@ import {
   Checkbox,
   Chip,
   FormControlLabel,
+  Grid,
+  InputAdornment,
+  MenuItem,
+  Select,
   TextField,
+  Typography,
   makeStyles,
 } from "@material-ui/core";
 import clsx from "clsx";
 import { Form, Formik } from "formik";
 import { transparentize } from "polished";
 import React from "react";
-import { ICreateLiquidityPool } from "types";
+import useCommonStyles from "styles/common";
+import { ICreateFund } from "types";
 import * as Yup from "yup";
 
-import {
-  FormAutocompleteMultipleRow,
-  FormInputRow,
-  FormSelectRow,
-} from "../index";
+import { FormAutocompleteMultipleRow, FormSelectField } from "../index";
 
 const useStyles = makeStyles((theme) => ({
-  root: {},
+  root: { height: "100%", position: "relative", overflow: "hidden" },
   contentWrapper: {
-    marginTop: 90,
-    padding: "60px 100px",
-    backgroundColor: theme.colors.primary,
-    "& > * + *": {
-      marginTop: 26,
+    backgroundColor: theme.colors.default,
+    display: "flex",
+    overflowY: "auto",
+    height: "100%",
+  },
+  leftContentWrapper: {
+    width: "66%",
+    borderRight: `1px solid ${theme.colors.third}`,
+    [theme.breakpoints.down("sm")]: {
+      width: "100%",
+      borderRight: "none",
+    },
+  },
+  rightContentWrapper: {
+    flex: 1,
+    [theme.breakpoints.down("sm")]: {
+      flex: "unset",
+    },
+  },
+  title: {
+    fontSize: 16,
+    color: theme.colors.reverse,
+  },
+  description: {
+    fontSize: 40,
+    color: theme.colors.reverse,
+    lineHeight: "48px",
+    marginTop: 24,
+  },
+  comment: { fontSize: 16, color: theme.colors.fourth, marginBottom: 16 },
+  groupComment: {
+    fontSize: 16,
+    color: theme.colors.reverse,
+    marginBottom: 8,
+    marginTop: 32,
+    fontWeight: 500,
+    "&.top": {
+      marginTop: 0,
     },
   },
   percentInput: {
@@ -45,26 +80,25 @@ const useStyles = makeStyles((theme) => ({
   },
   chip: {
     backgroundColor: theme.colors.primary,
-    fontSize: 22,
-    padding: 16,
-    height: 62,
-    borderRadius: 30,
+    fontSize: 16,
+    padding: 8,
+    borderRadius: 16,
     justifyContent: "space-between",
     "& > span": {
-      marginRight: 40,
+      marginRight: 24,
       fontWeight: 200,
     },
     "& svg": {
-      width: 30,
-      height: 30,
+      width: 16,
+      height: 16,
       marginRight: "0px !important",
     },
   },
   autoCompleteInput: {
-    fontSize: 24,
+    fontSize: 16,
     marginTop: 3,
     "& input": {
-      fontSize: 24,
+      fontSize: 16,
     },
   },
   link: {
@@ -96,17 +130,18 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export interface ICreateLiquidityPoolFormValues extends ICreateLiquidityPool {
+export interface ICreateFundFormValues extends ICreateFund {
   accepted: boolean;
 }
 
 export interface IProps {
-  onSubmit: (_: ICreateLiquidityPool) => void;
+  onSubmit: (_: ICreateFund) => void;
 }
 
 const CreateLiquidityPoolForm = (props: IProps) => {
   const classes = useStyles();
-  const initialFormValue: ICreateLiquidityPoolFormValues = {
+  const commonClasses = useCommonStyles();
+  const initialFormValue: ICreateFundFormValues = {
     name: "",
     symbol: "",
     about: "",
@@ -120,323 +155,268 @@ const CreateLiquidityPoolForm = (props: IProps) => {
   };
 
   return (
-    <div className={classes.root}>
-      <Formik
-        initialValues={initialFormValue}
-        onSubmit={async (values, { setErrors }) => {
-          console.log("-=-=-=-=");
-          props.onSubmit(values);
-        }}
-        validationSchema={Yup.object().shape({
-          name: Yup.string().required(),
-          symbol: Yup.string().required(),
-          about: Yup.string().required(),
-          fee: Yup.number().required(),
-          acceptedTokens: Yup.array().required(),
-          platformWhitelist: Yup.array().required(),
-          tokenWhitelist: Yup.array().required(),
-          liquidityPoolType: Yup.string().required(),
-          allowLeverage: Yup.string().required(),
-        })}
-      >
-        {({
-          errors,
-          handleBlur,
-          handleChange,
-          handleSubmit,
-          isSubmitting,
-          isValid,
-          setFieldValue,
-          touched,
-          values,
-        }) => (
-          <Form onSubmit={handleSubmit}>
-            <div className={classes.contentWrapper}>
-              <FormInputRow
-                FormHelperTextProps={{
-                  error: Boolean(touched.name && errors.name),
-                }}
-                InputProps={{
-                  id: "name",
-                  name: "name",
-                  onBlur: handleBlur,
-                  onChange: handleChange,
-                  value: values.name,
-                  placeholder: "Small-Cap Growth",
-                }}
-                helperText={touched.name && errors.name ? errors.name : ""}
-                label="Name:"
-                labelWidth="280"
-              />
-              <FormInputRow
-                FormHelperTextProps={{
-                  error: Boolean(touched.symbol && errors.symbol),
-                }}
-                InputProps={{
-                  id: "symbol",
-                  name: "symbol",
-                  onBlur: handleBlur,
-                  onChange: handleChange,
-                  value: values.symbol,
-                  placeholder: "SCG",
-                }}
-                helperText={
-                  touched.symbol && errors.symbol ? errors.symbol : ""
-                }
-                label="Symbol:"
-                labelWidth="280"
-              />
-              <FormInputRow
-                FormHelperTextProps={{
-                  error: Boolean(touched.about && errors.about),
-                }}
-                InputProps={{
-                  id: "about",
-                  name: "about",
-                  onBlur: handleBlur,
-                  onChange: handleChange,
-                  value: values.about,
-                  placeholder:
-                    "This liquidity pool will invest in altcoins that have huge growth potential, seeking 100 times of return",
-                  multiline: true,
-                }}
-                helperText={touched.about && errors.about ? errors.about : ""}
-                inputFullWidth
-                label="About:"
-                labelWidth="280"
-              />
-            </div>
-            <div className={classes.contentWrapper}>
-              <FormInputRow
-                FormHelperTextProps={{
-                  error: Boolean(touched.fee && errors.fee),
-                }}
-                InputProps={{
-                  id: "fee",
-                  name: "fee",
-                  onBlur: handleBlur,
-                  onChange: handleChange,
-                  value: values.fee,
-                  placeholder: "0",
-                  renderSuffix: () => "%",
-                  classes: { input: classes.percentInput },
-                  type: "number",
-                  inputProps: { min: 0, max: 100 },
-                }}
-                helperText={touched.fee && errors.fee ? errors.fee : ""}
-                label="Fee:"
-                labelWidth="280"
-              />
-              <FormAutocompleteMultipleRow
-                AutocompleteProps={{
-                  multiple: true,
-                  id: "acceptedTokens",
-                  size: "small",
-                  options: [
-                    { title: "ETH", value: "eth" },
-                    { title: "BTC", value: "btc" },
-                  ],
-                  getOptionLabel: (option) => option.title || "",
-                  // eslint-disable-next-line react/display-name
-                  renderInput: (params) => (
+    <Formik
+      initialValues={initialFormValue}
+      onSubmit={async (values, { setErrors }) => {
+        console.log("-=-=-=-=");
+        props.onSubmit(values);
+      }}
+      validationSchema={Yup.object().shape({
+        name: Yup.string().required(),
+        symbol: Yup.string().required(),
+        about: Yup.string().required(),
+        fee: Yup.number().required(),
+        acceptedTokens: Yup.array().required(),
+        platformWhitelist: Yup.array().required(),
+        tokenWhitelist: Yup.array().required(),
+        liquidityPoolType: Yup.string().required(),
+        allowLeverage: Yup.string().required(),
+      })}
+    >
+      {({
+        errors,
+        handleBlur,
+        handleChange,
+        handleSubmit,
+        isSubmitting,
+        isValid,
+        setFieldValue,
+        touched,
+        values,
+      }) => (
+        <Form onSubmit={handleSubmit}>
+          <div className={classes.root}>
+            <div className={clsx(classes.contentWrapper, commonClasses.scroll)}>
+              <div
+                className={clsx(
+                  classes.leftContentWrapper,
+                  commonClasses.pageContent
+                )}
+              >
+                <Typography className={classes.title}>
+                  Create new fund
+                </Typography>
+                <Typography className={classes.description}>
+                  Very long title example for liquidity
+                </Typography>
+                <Typography className={classes.comment}>
+                  This liquidity pool will invest in altcoins that have huge
+                  growth potential, seeking 100 times of return
+                </Typography>
+                <Typography className={classes.groupComment}>
+                  General Info
+                </Typography>
+                <Grid container spacing={3}>
+                  <Grid item xs={6}>
                     <TextField
-                      {...params}
-                      InputProps={{
-                        ...params.InputProps,
-                        disableUnderline: true,
-                      }}
-                      className={clsx(
-                        (params as any).className,
-                        classes.autoCompleteInput
-                      )}
-                      placeholder="BTC"
-                      variant="standard"
+                      InputLabelProps={{ shrink: true }}
+                      error={Boolean(touched.symbol && errors.symbol)}
+                      fullWidth
+                      helperText={touched.symbol && errors.symbol}
+                      id="symbol"
+                      label="Symbol"
+                      name="symbol"
+                      onBlur={handleBlur}
+                      onChange={handleChange}
+                      placeholder="Enter symbol"
+                      required
+                      value={values.symbol}
+                      variant="outlined"
                     />
-                  ),
-                  renderTags: (value, getTagProps) =>
-                    value.map((option, index) => (
-                      <Chip
-                        key={`${option.value || index}`}
-                        label={option.title}
-                        size="small"
-                        variant="outlined"
-                        {...getTagProps({ index })}
-                        className={clsx(
-                          (getTagProps({ index }) as any).className,
-                          classes.chip
-                        )}
-                      />
-                    )),
-                }}
-                FormHelperTextProps={{
-                  error: Boolean(
-                    touched.acceptedTokens && errors.acceptedTokens
-                  ),
-                }}
-                helperText={
-                  touched.acceptedTokens && errors.acceptedTokens
-                    ? errors.acceptedTokens[0]
-                    : ""
-                }
-                inputFullWidth
-                label="Accepted Tokens:"
-                labelWidth="280"
-              />
-              <FormSelectRow
-                FormHelperTextProps={{
-                  error: Boolean(
-                    touched.liquidityPoolType && errors.liquidityPoolType
-                  ),
-                }}
-                SelectProps={{
-                  id: "liquidityPoolType",
-                  name: "liquidityPoolType",
-                  onBlur: handleBlur,
-                  onChange: handleChange,
-                  value: values.liquidityPoolType,
-                }}
-                helperText={
-                  touched.liquidityPoolType && errors.liquidityPoolType
-                    ? errors.liquidityPoolType
-                    : ""
-                }
-                items={[{ label: "Spot - DEFI", value: "Spot - DEFI" }]}
-                label="Liquidity Pool Type:"
-                labelWidth="280"
-              />
-              <FormAutocompleteMultipleRow
-                AutocompleteProps={{
-                  multiple: true,
-                  id: "Platform Whitelist",
-                  size: "small",
-                  options: [
-                    { title: "Compound", value: "Compound" },
-                    { title: "Uniswap", value: "Uniswap" },
-                  ],
-                  getOptionLabel: (option) => option.title || "",
-                  // eslint-disable-next-line react/display-name
-                  renderInput: (params) => (
+                  </Grid>
+                  <Grid item xs={6}>
                     <TextField
-                      {...params}
+                      InputLabelProps={{ shrink: true }}
                       InputProps={{
-                        ...params.InputProps,
-                        disableUnderline: true,
+                        endAdornment: (
+                          <InputAdornment position="end">%</InputAdornment>
+                        ),
                       }}
-                      className={clsx(
-                        (params as any).className,
-                        classes.autoCompleteInput
-                      )}
-                      placeholder="Uniswap"
-                      variant="standard"
+                      error={Boolean(touched.fee && errors.fee)}
+                      fullWidth
+                      helperText={touched.fee && errors.fee}
+                      id="fee"
+                      label="Fee %"
+                      name="fee"
+                      onBlur={handleBlur}
+                      onChange={handleChange}
+                      placeholder="Enter fee"
+                      required
+                      type="number"
+                      value={values.fee}
+                      variant="outlined"
                     />
-                  ),
-                  renderTags: (value, getTagProps) =>
-                    value.map((option, index) => (
-                      <Chip
-                        key={`${option.value || index}`}
-                        label={option.title}
-                        size="small"
-                        variant="outlined"
-                        {...getTagProps({ index })}
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      InputLabelProps={{ shrink: true }}
+                      fullWidth
+                      id="allowLeverage"
+                      label="Allow Leverage:"
+                      name="allowLeverage"
+                      onBlur={handleBlur}
+                      onChange={handleChange}
+                      placeholder="Allow Leverage:"
+                      required
+                      select
+                      value={values.allowLeverage}
+                      variant="outlined"
+                    >
+                      {[
+                        { label: "1x", value: "1x" },
+                        { label: "3x", value: "3x" },
+                        { label: "5x", value: "5x" },
+                        { label: "7x", value: "6x" },
+                        { label: "10x", value: "10x" },
+                      ].map((e) => (
+                        <MenuItem key={e.value} value={e.value}>
+                          {e.label}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <FormSelectField
+                      FormControlProps={{ fullWidth: true }}
+                      InputLabelProps={{
+                        htmlFor: "liquidityPoolType",
+                        shrink: true,
+                      }}
+                      SelectProps={{
+                        id: "liquidityPoolType",
+                        name: "liquidityPoolType",
+                        onBlur: handleBlur,
+                        onChange: handleChange,
+                        value: values.liquidityPoolType,
+                      }}
+                      items={[{ label: "Spot - DEFI", value: "Spot - DEFI" }]}
+                      label="Liquidity Pool Type:"
+                    />
+                  </Grid>
+                </Grid>
+                <Typography className={classes.groupComment}>
+                  Whitelists
+                </Typography>
+
+                <FormAutocompleteMultipleRow
+                  AutocompleteProps={{
+                    multiple: true,
+                    fullWidth: true,
+                    id: "Platform Whitelist",
+                    size: "small",
+                    options: [
+                      { title: "Compound", value: "Compound" },
+                      { title: "Uniswap", value: "Uniswap" },
+                    ],
+                    getOptionLabel: (option) => option.title || "",
+                    // eslint-disable-next-line react/display-name
+                    renderInput: (params) => (
+                      <TextField
+                        {...params}
+                        InputProps={{
+                          ...params.InputProps,
+                          disableUnderline: true,
+                        }}
                         className={clsx(
-                          (getTagProps({ index }) as any).className,
-                          classes.chip
+                          (params as any).className,
+                          classes.autoCompleteInput
                         )}
+                        placeholder="Uniswap"
+                        variant="standard"
                       />
-                    )),
-                }}
-                FormHelperTextProps={{
-                  error: Boolean(
+                    ),
+                    renderTags: (value, getTagProps) =>
+                      value.map((option, index) => (
+                        <Chip
+                          key={`${option.value || index}`}
+                          label={option.title}
+                          size="small"
+                          variant="outlined"
+                          {...getTagProps({ index })}
+                          className={clsx(
+                            (getTagProps({ index }) as any).className,
+                            classes.chip
+                          )}
+                        />
+                      )),
+                  }}
+                  FormHelperTextProps={{
+                    error: Boolean(
+                      touched.platformWhitelist && errors.platformWhitelist
+                    ),
+                  }}
+                  helperText={
                     touched.platformWhitelist && errors.platformWhitelist
-                  ),
-                }}
-                helperText={
-                  touched.platformWhitelist && errors.platformWhitelist
-                    ? errors.platformWhitelist[0]
-                    : ""
-                }
-                inputFullWidth
-                label="Accepted Tokens:"
-                labelWidth="280"
-              />
-              <FormAutocompleteMultipleRow
-                AutocompleteProps={{
-                  multiple: true,
-                  id: "Token Whitelist",
-                  size: "small",
-                  options: [{ title: "All", value: "all" }],
-                  getOptionLabel: (option) => option.title || "",
-                  // eslint-disable-next-line react/display-name
-                  renderInput: (params) => (
-                    <TextField
-                      {...params}
-                      InputProps={{
-                        ...params.InputProps,
-                        disableUnderline: true,
-                      }}
-                      className={clsx(
-                        (params as any).className,
-                        classes.autoCompleteInput
-                      )}
-                      placeholder="All"
-                      variant="standard"
-                    />
-                  ),
-                  renderTags: (value, getTagProps) =>
-                    value.map((option, index) => (
-                      <Chip
-                        key={`${option.value || index}`}
-                        label={option.title}
-                        size="small"
-                        variant="outlined"
-                        {...getTagProps({ index })}
+                      ? errors.platformWhitelist[0]
+                      : ""
+                  }
+                  label="Accepted Tokens:"
+                />
+              </div>
+              <div
+                className={clsx(
+                  classes.rightContentWrapper,
+                  commonClasses.pageContent
+                )}
+              >
+                <Typography className={clsx(classes.groupComment, "top")}>
+                  Accepted Assets
+                </Typography>
+                <FormAutocompleteMultipleRow
+                  AutocompleteProps={{
+                    multiple: true,
+                    fullWidth: true,
+                    id: "acceptedTokens",
+                    size: "small",
+                    options: [
+                      { title: "ETH", value: "eth" },
+                      { title: "BTC", value: "btc" },
+                    ],
+                    getOptionLabel: (option) => option.title || "",
+                    // eslint-disable-next-line react/display-name
+                    renderInput: (params) => (
+                      <TextField
+                        {...params}
+                        InputProps={{
+                          ...params.InputProps,
+                          disableUnderline: true,
+                        }}
                         className={clsx(
-                          (getTagProps({ index }) as any).className,
-                          classes.chip
+                          (params as any).className,
+                          classes.autoCompleteInput
                         )}
+                        placeholder="BTC"
+                        variant="standard"
                       />
-                    )),
-                }}
-                FormHelperTextProps={{
-                  error: Boolean(
-                    touched.tokenWhitelist && errors.tokenWhitelist
-                  ),
-                }}
-                helperText={
-                  touched.tokenWhitelist && errors.tokenWhitelist
-                    ? errors.tokenWhitelist[0]
-                    : ""
-                }
-                inputFullWidth
-                label="Token Whitelist:"
-                labelWidth="280"
-              />
-              <FormSelectRow
-                FormHelperTextProps={{
-                  error: Boolean(touched.allowLeverage && errors.allowLeverage),
-                }}
-                SelectProps={{
-                  id: "allowLeverage",
-                  name: "allowLeverage",
-                  onBlur: handleBlur,
-                  onChange: handleChange,
-                  value: values.allowLeverage,
-                }}
-                helperText={
-                  touched.allowLeverage && errors.allowLeverage
-                    ? errors.allowLeverage
-                    : ""
-                }
-                items={[
-                  { label: "1x", value: "1x" },
-                  { label: "3x", value: "3x" },
-                  { label: "5x", value: "5x" },
-                  { label: "7x", value: "6x" },
-                  { label: "10x", value: "10x" },
-                ]}
-                label="Allow Leverage:"
-                labelWidth="280"
-              />
+                    ),
+                    renderTags: (value, getTagProps) =>
+                      value.map((option, index) => (
+                        <Chip
+                          key={`${option.value || index}`}
+                          label={option.title}
+                          size="small"
+                          variant="outlined"
+                          {...getTagProps({ index })}
+                          className={clsx(
+                            (getTagProps({ index }) as any).className,
+                            classes.chip
+                          )}
+                        />
+                      )),
+                  }}
+                  FormHelperTextProps={{
+                    error: Boolean(
+                      touched.acceptedTokens && errors.acceptedTokens
+                    ),
+                  }}
+                  helperText={
+                    touched.acceptedTokens && errors.acceptedTokens
+                      ? errors.acceptedTokens[0]
+                      : ""
+                  }
+                  label="Accepted Tokens:"
+                />
+              </div>
             </div>
             <a className={classes.link} href="https://google.com">
               *Your liquidity pool is subject to law and regulations...
@@ -459,10 +439,10 @@ const CreateLiquidityPoolForm = (props: IProps) => {
             >
               Create
             </Button>
-          </Form>
-        )}
-      </Formik>
-    </div>
+          </div>
+        </Form>
+      )}
+    </Formik>
   );
 };
 

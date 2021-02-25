@@ -1,4 +1,4 @@
 export * from "./CreateLiquidityPoolForm";
-export * from "./FormSelectRow";
-export * from "./FormInputRow";
+export * from "./FormInputLabel";
 export * from "./FormAutocompleteMultipleRow";
+export * from "./FormSelectField";

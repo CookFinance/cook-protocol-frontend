@@ -66,7 +66,7 @@ export interface ICoinPrices {
   prev: { [key in KnownToken]: BigNumber };
 }
 
-export interface ICreateLiquidityPool {
+export interface ICreateFund {
   name: string;
   symbol: string;
   about: string;
@@ -79,5 +79,5 @@ export interface ICreateLiquidityPool {
 }
 
 export interface IGlobalData {
-  createdPools: ICreateLiquidityPool[];
+  createdPools: ICreateFund[];
 }

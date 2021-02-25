@@ -10,18 +10,18 @@ const routes = [
     routes: [
       {
         exact: false,
-        path: "/create",
-        component: lazy(() => import("pages/CreatePage")),
+        path: "/new-fund",
+        component: lazy(() => import("pages/NewFundPage")),
       },
       {
         exact: true,
-        path: "/pool",
-        component: lazy(() => import("pages/PoolPage")),
+        path: "/funds",
+        component: lazy(() => import("pages/FundPage")),
       },
       {
         exact: true,
-        path: "/pool/:id",
-        component: lazy(() => import("pages/PoolDetailsPage")),
+        path: "/fund/:id",
+        component: lazy(() => import("pages/FundDetailsPage")),
       },
       {
         exact: false,
@@ -42,7 +42,7 @@ const routes = [
       {
         path: "*",
         // eslint-disable-next-line
-        component: () => <Redirect to="/create" />,
+        component: () => <Redirect to="/funds" />,
       },
     ],
   },

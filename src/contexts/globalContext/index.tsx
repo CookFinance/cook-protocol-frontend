@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { ICreateLiquidityPool, IGlobalData, Maybe } from "types";
+import { ICreateFund, IGlobalData, Maybe } from "types";
 
 const GlobalContext = React.createContext<
   IGlobalData & {
-    addPool: (_: ICreateLiquidityPool) => void;
+    addFund: (_: ICreateFund) => void;
   }
 >({
   createdPools: [],
-  addPool: (_: ICreateLiquidityPool) => {},
+  addFund: (_: ICreateFund) => {},
 });
 
 export const useGlobal = () => {
@@ -25,7 +25,7 @@ export const GlobalProvider: React.FC = (props) => {
     createdPools: [],
   });
 
-  const addPool = (payload: ICreateLiquidityPool) => {
+  const addFund = (payload: ICreateFund) => {
     setState((prev) => ({
       ...prev,
       createdPools: [...prev.createdPools, payload],
@@ -33,7 +33,7 @@ export const GlobalProvider: React.FC = (props) => {
   };
 
   return (
-    <GlobalContext.Provider value={{ ...state, addPool }}>
+    <GlobalContext.Provider value={{ ...state, addFund }}>
       {props.children}
     </GlobalContext.Provider>
   );
