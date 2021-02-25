@@ -9,7 +9,6 @@ import { ICreateFund } from "types";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    marginBottom: 100,
     height: "100%",
   },
 }));

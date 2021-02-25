@@ -59,8 +59,7 @@ const themesOptions = [
         active: "rgba(255, 255, 255, 0.54)",
         hover: "rgba(255, 255, 255, 0.04)",
         selected: "rgba(255, 255, 255, 0.08)",
-        disabled: "rgba(255, 255, 255, 0.26)",
-        disabledBackground: "rgba(255, 255, 255, 0.12)",
+
         focus: "rgba(255, 255, 255, 0.12)",
       },
       background: {
@@ -109,8 +108,6 @@ const themesOptions = [
         active: "rgba(255, 255, 255, 0.54)",
         hover: "rgba(255, 255, 255, 0.04)",
         selected: "rgba(255, 255, 255, 0.08)",
-        disabled: "rgba(255, 255, 255, 0.26)",
-        disabledBackground: "rgba(255, 255, 255, 0.12)",
         focus: "rgba(255, 255, 255, 0.12)",
       },
       background: {

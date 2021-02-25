@@ -1,3 +1,10 @@
+import { ReactComponent as CompSvg } from "assets/svgs/token/comp.svg";
+import { ReactComponent as DotSvg } from "assets/svgs/token/dot.svg";
+import { ReactComponent as EthSvg } from "assets/svgs/token/eth.svg";
+import { ReactComponent as LinkSvg } from "assets/svgs/token/link.svg";
+import { ReactComponent as LtcSvg } from "assets/svgs/token/ltc.svg";
+import { ReactComponent as UniSvg } from "assets/svgs/token/uni.svg";
+import { ReactComponent as XlmSvg } from "assets/svgs/token/xlm.svg";
 import { ReactComponent as CoinbaseSVG } from "assets/svgs/wallet/coinbase.svg";
 import { ReactComponent as FormaticSVG } from "assets/svgs/wallet/fortmatic.svg";
 import { ReactComponent as MetaMaskSVG } from "assets/svgs/wallet/metamask-color.svg";
@@ -20,3 +27,26 @@ export const WALLET_ICONS: { [key in ConnectorNames]: React.ElementType } = {
   [ConnectorNames.WalletLink]: CoinbaseSVG,
   [ConnectorNames.Fortmatic]: FormaticSVG,
 };
+
+export const TOKEN_ICONS: { [key: string]: React.ElementType } = {
+  comp: CompSvg,
+  uni: UniSvg,
+  eth: EthSvg,
+  lnk: LinkSvg,
+  xlm: XlmSvg,
+  ltc: LtcSvg,
+  dot: DotSvg,
+};
+
+export const PlATFORMS = [
+  { label: "Compound", value: "comp" },
+  { label: "Uniswap", value: "uni" },
+];
+
+export const TOKENS = [
+  { label: "ETH", value: "eth" },
+  { label: "LINK", value: "lnk" },
+  { label: "XLM", value: "xlm" },
+  { label: "LTC", value: "ltc" },
+  { label: "DOT", value: "dot" },
+];

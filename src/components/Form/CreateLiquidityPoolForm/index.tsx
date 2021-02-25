@@ -1,25 +1,23 @@
 import {
   Button,
   Checkbox,
-  Chip,
   FormControlLabel,
   Grid,
   InputAdornment,
   MenuItem,
-  Select,
   TextField,
   Typography,
   makeStyles,
 } from "@material-ui/core";
+import CloseIcon from "@material-ui/icons/Close";
 import clsx from "clsx";
+import { PlATFORMS, TOKENS, TOKEN_ICONS } from "config/constants";
 import { Form, Formik } from "formik";
 import { transparentize } from "polished";
 import React from "react";
 import useCommonStyles from "styles/common";
 import { ICreateFund } from "types";
 import * as Yup from "yup";
-
-import { FormAutocompleteMultipleRow, FormSelectField } from "../index";
 
 const useStyles = makeStyles((theme) => ({
   root: { height: "100%", position: "relative", overflow: "hidden" },
@@ -64,54 +62,10 @@ const useStyles = makeStyles((theme) => ({
       marginTop: 0,
     },
   },
-  percentInput: {
-    textAlign: "right",
-    "&::-webkit-outer-spin-button": {
-      "-webkit-appearance": "none",
-      margin: 0,
-    },
-    "&::-webkit-inner-spin-button": {
-      "-webkit-appearance": "none",
-      margin: 0,
-    },
-    "&[type=number]": {
-      "-moz-appearance": "textfield",
-    },
-  },
-  chip: {
-    backgroundColor: theme.colors.primary,
-    fontSize: 16,
-    padding: 8,
-    borderRadius: 16,
-    justifyContent: "space-between",
-    "& > span": {
-      marginRight: 24,
-      fontWeight: 200,
-    },
-    "& svg": {
-      width: 16,
-      height: 16,
-      marginRight: "0px !important",
-    },
-  },
-  autoCompleteInput: {
-    fontSize: 16,
-    marginTop: 3,
-    "& input": {
-      fontSize: 16,
-    },
-  },
-  link: {
-    color: transparentize(0.2, theme.colors.default),
-    fontSize: 24,
-    marginTop: 90,
-    display: "inline-block",
-  },
+
   checkbox: {
-    marginTop: 50,
-    marginBottom: 50,
     display: "flex",
-    color: transparentize(0.5, theme.colors.default),
+    color: transparentize(0.5, theme.colors.secondary),
     fontSize: 24,
     "& svg": {
       width: 30,
@@ -120,13 +74,85 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   submit: {
-    minWidth: 310,
-    height: 60,
-    backgroundColor: theme.colors.third,
-    fontSize: 24,
-    fontWeight: "bold",
-    color: theme.colors.reverse,
+    height: 40,
+    fontSize: 14,
     textTransform: "none",
+    minWidth: 260,
+  },
+  platforms: {
+    display: "flex",
+    marginTop: 8,
+    flexWrap: "wrap",
+    alignItems: "center",
+  },
+  platform: {
+    display: "flex",
+    alignItems: "center",
+    height: 32,
+    borderRadius: 16,
+    border: `1px solid ${theme.colors.third}`,
+    marginRight: 8,
+    marginBottom: 8,
+    padding: "4px",
+    "&:last-child": {
+      marginRight: 0,
+    },
+    "& > svg": {
+      width: 24,
+      height: 24,
+    },
+    "& span": {
+      color: theme.colors.secondary,
+      fontWeight: 200,
+      padding: "0 10px",
+      "&:last-child": {
+        height: 20,
+        cursor: "pointer",
+        "& svg": {
+          width: 20,
+          height: 20,
+        },
+      },
+    },
+  },
+  assets: {
+    marginTop: 8,
+  },
+  asset: {
+    display: "flex",
+    alignItems: "center",
+    padding: "12px 8px",
+    "& > svg": {
+      width: 24,
+      height: 24,
+    },
+    "& span": {
+      flex: 1,
+      fontSize: 14,
+      color: theme.colors.secondary,
+      padding: "0 10px",
+      "&:last-child": {
+        height: 20,
+        flex: "unset",
+        cursor: "pointer",
+        "& svg": {
+          width: 20,
+          height: 20,
+        },
+      },
+    },
+  },
+  bottom: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 1,
+    backgroundColor: theme.colors.default,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    padding: "16px 24px",
   },
 }));
 
@@ -184,243 +210,235 @@ const CreateLiquidityPoolForm = (props: IProps) => {
         touched,
         values,
       }) => (
-        <Form onSubmit={handleSubmit}>
-          <div className={classes.root}>
-            <div className={clsx(classes.contentWrapper, commonClasses.scroll)}>
-              <div
-                className={clsx(
-                  classes.leftContentWrapper,
-                  commonClasses.pageContent
-                )}
-              >
-                <Typography className={classes.title}>
-                  Create new fund
-                </Typography>
-                <Typography className={classes.description}>
-                  Very long title example for liquidity
-                </Typography>
-                <Typography className={classes.comment}>
-                  This liquidity pool will invest in altcoins that have huge
-                  growth potential, seeking 100 times of return
-                </Typography>
-                <Typography className={classes.groupComment}>
-                  General Info
-                </Typography>
-                <Grid container spacing={3}>
-                  <Grid item xs={6}>
-                    <TextField
-                      InputLabelProps={{ shrink: true }}
-                      error={Boolean(touched.symbol && errors.symbol)}
-                      fullWidth
-                      helperText={touched.symbol && errors.symbol}
-                      id="symbol"
-                      label="Symbol"
-                      name="symbol"
-                      onBlur={handleBlur}
-                      onChange={handleChange}
-                      placeholder="Enter symbol"
-                      required
-                      value={values.symbol}
-                      variant="outlined"
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <TextField
-                      InputLabelProps={{ shrink: true }}
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">%</InputAdornment>
-                        ),
-                      }}
-                      error={Boolean(touched.fee && errors.fee)}
-                      fullWidth
-                      helperText={touched.fee && errors.fee}
-                      id="fee"
-                      label="Fee %"
-                      name="fee"
-                      onBlur={handleBlur}
-                      onChange={handleChange}
-                      placeholder="Enter fee"
-                      required
-                      type="number"
-                      value={values.fee}
-                      variant="outlined"
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <TextField
-                      InputLabelProps={{ shrink: true }}
-                      fullWidth
-                      id="allowLeverage"
-                      label="Allow Leverage:"
-                      name="allowLeverage"
-                      onBlur={handleBlur}
-                      onChange={handleChange}
-                      placeholder="Allow Leverage:"
-                      required
-                      select
-                      value={values.allowLeverage}
-                      variant="outlined"
-                    >
-                      {[
-                        { label: "1x", value: "1x" },
-                        { label: "3x", value: "3x" },
-                        { label: "5x", value: "5x" },
-                        { label: "7x", value: "6x" },
-                        { label: "10x", value: "10x" },
-                      ].map((e) => (
+        <Form className={classes.root} onSubmit={handleSubmit}>
+          <div className={clsx(classes.contentWrapper, commonClasses.scroll)}>
+            <div
+              className={clsx(
+                classes.leftContentWrapper,
+                commonClasses.pageContent
+              )}
+            >
+              <Typography className={classes.title}>Create new fund</Typography>
+              <Typography className={classes.description}>
+                Very long title example for liquidity
+              </Typography>
+              <Typography className={classes.comment}>
+                This liquidity pool will invest in altcoins that have huge
+                growth potential, seeking 100 times of return
+              </Typography>
+              <Typography className={classes.groupComment}>
+                General Info
+              </Typography>
+              <Grid container spacing={3}>
+                <Grid item xs={6}>
+                  <TextField
+                    InputLabelProps={{ shrink: true }}
+                    error={Boolean(touched.symbol && errors.symbol)}
+                    fullWidth
+                    helperText={touched.symbol && errors.symbol}
+                    id="symbol"
+                    label="Symbol"
+                    name="symbol"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    placeholder="Enter symbol"
+                    required
+                    value={values.symbol}
+                    variant="outlined"
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    InputLabelProps={{ shrink: true }}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">%</InputAdornment>
+                      ),
+                    }}
+                    error={Boolean(touched.fee && errors.fee)}
+                    fullWidth
+                    helperText={touched.fee && errors.fee}
+                    id="fee"
+                    label="Fee %"
+                    name="fee"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    placeholder="Enter fee"
+                    required
+                    type="number"
+                    value={values.fee}
+                    variant="outlined"
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    InputLabelProps={{ shrink: true }}
+                    fullWidth
+                    id="allowLeverage"
+                    label="Allow Leverage:"
+                    name="allowLeverage"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    placeholder="Allow Leverage:"
+                    required
+                    select
+                    value={values.allowLeverage}
+                    variant="outlined"
+                  >
+                    {[
+                      { label: "1x", value: "1x" },
+                      { label: "3x", value: "3x" },
+                      { label: "5x", value: "5x" },
+                      { label: "7x", value: "6x" },
+                      { label: "10x", value: "10x" },
+                    ].map((e) => (
+                      <MenuItem key={e.value} value={e.value}>
+                        {e.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    InputLabelProps={{ shrink: true }}
+                    fullWidth
+                    id="liquidityPoolType"
+                    label="Liquidity Pool Type:"
+                    name="liquidityPoolType"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    placeholder="Liquidity Pool Type:"
+                    required
+                    select
+                    value={values.liquidityPoolType}
+                    variant="outlined"
+                  >
+                    {[{ label: "Spot - DEFI", value: "Spot - DEFI" }].map(
+                      (e) => (
                         <MenuItem key={e.value} value={e.value}>
                           {e.label}
                         </MenuItem>
-                      ))}
-                    </TextField>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <FormSelectField
-                      FormControlProps={{ fullWidth: true }}
-                      InputLabelProps={{
-                        htmlFor: "liquidityPoolType",
-                        shrink: true,
-                      }}
-                      SelectProps={{
-                        id: "liquidityPoolType",
-                        name: "liquidityPoolType",
-                        onBlur: handleBlur,
-                        onChange: handleChange,
-                        value: values.liquidityPoolType,
-                      }}
-                      items={[{ label: "Spot - DEFI", value: "Spot - DEFI" }]}
-                      label="Liquidity Pool Type:"
-                    />
-                  </Grid>
+                      )
+                    )}
+                  </TextField>
                 </Grid>
-                <Typography className={classes.groupComment}>
-                  Whitelists
-                </Typography>
+              </Grid>
+              <Typography className={classes.groupComment}>
+                Whitelists
+              </Typography>
 
-                <FormAutocompleteMultipleRow
-                  AutocompleteProps={{
-                    multiple: true,
-                    fullWidth: true,
-                    id: "Platform Whitelist",
-                    size: "small",
-                    options: [
-                      { title: "Compound", value: "Compound" },
-                      { title: "Uniswap", value: "Uniswap" },
-                    ],
-                    getOptionLabel: (option) => option.title || "",
-                    // eslint-disable-next-line react/display-name
-                    renderInput: (params) => (
-                      <TextField
-                        {...params}
-                        InputProps={{
-                          ...params.InputProps,
-                          disableUnderline: true,
-                        }}
-                        className={clsx(
-                          (params as any).className,
-                          classes.autoCompleteInput
-                        )}
-                        placeholder="Uniswap"
-                        variant="standard"
-                      />
-                    ),
-                    renderTags: (value, getTagProps) =>
-                      value.map((option, index) => (
-                        <Chip
-                          key={`${option.value || index}`}
-                          label={option.title}
-                          size="small"
-                          variant="outlined"
-                          {...getTagProps({ index })}
-                          className={clsx(
-                            (getTagProps({ index }) as any).className,
-                            classes.chip
-                          )}
-                        />
-                      )),
-                  }}
-                  FormHelperTextProps={{
-                    error: Boolean(
-                      touched.platformWhitelist && errors.platformWhitelist
-                    ),
-                  }}
-                  helperText={
-                    touched.platformWhitelist && errors.platformWhitelist
-                      ? errors.platformWhitelist[0]
-                      : ""
-                  }
-                  label="Accepted Tokens:"
-                />
-              </div>
-              <div
-                className={clsx(
-                  classes.rightContentWrapper,
-                  commonClasses.pageContent
-                )}
+              <TextField
+                InputLabelProps={{ shrink: true }}
+                fullWidth
+                id="platform-white-list"
+                label="Platform Whitelist:"
+                onChange={(e) => {
+                  setFieldValue("platformWhitelist", [
+                    ...values.platformWhitelist,
+                    e.target.value,
+                  ]);
+                }}
+                placeholder="Add platform whitelist"
+                required
+                select
+                value=""
+                variant="outlined"
               >
-                <Typography className={clsx(classes.groupComment, "top")}>
-                  Accepted Assets
-                </Typography>
-                <FormAutocompleteMultipleRow
-                  AutocompleteProps={{
-                    multiple: true,
-                    fullWidth: true,
-                    id: "acceptedTokens",
-                    size: "small",
-                    options: [
-                      { title: "ETH", value: "eth" },
-                      { title: "BTC", value: "btc" },
-                    ],
-                    getOptionLabel: (option) => option.title || "",
-                    // eslint-disable-next-line react/display-name
-                    renderInput: (params) => (
-                      <TextField
-                        {...params}
-                        InputProps={{
-                          ...params.InputProps,
-                          disableUnderline: true,
+                {PlATFORMS.map((e) => (
+                  <MenuItem key={e.value} value={e.value}>
+                    {e.label}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <div className={classes.platforms}>
+                {values.platformWhitelist.map((platformValue) => {
+                  const platform = PlATFORMS.find(
+                    (e) => e.value === platformValue
+                  );
+                  const Icon = TOKEN_ICONS[platformValue];
+                  if (!platform || !Icon) return null;
+                  return (
+                    <div className={classes.platform} key={platformValue}>
+                      <Icon />
+                      <span>{platform.label}</span>
+                      <span
+                        onClick={() => {
+                          setFieldValue(
+                            "platformWhitelist",
+                            values.platformWhitelist.filter(
+                              (e) => e !== platformValue
+                            )
+                          );
                         }}
-                        className={clsx(
-                          (params as any).className,
-                          classes.autoCompleteInput
-                        )}
-                        placeholder="BTC"
-                        variant="standard"
-                      />
-                    ),
-                    renderTags: (value, getTagProps) =>
-                      value.map((option, index) => (
-                        <Chip
-                          key={`${option.value || index}`}
-                          label={option.title}
-                          size="small"
-                          variant="outlined"
-                          {...getTagProps({ index })}
-                          className={clsx(
-                            (getTagProps({ index }) as any).className,
-                            classes.chip
-                          )}
-                        />
-                      )),
-                  }}
-                  FormHelperTextProps={{
-                    error: Boolean(
-                      touched.acceptedTokens && errors.acceptedTokens
-                    ),
-                  }}
-                  helperText={
-                    touched.acceptedTokens && errors.acceptedTokens
-                      ? errors.acceptedTokens[0]
-                      : ""
-                  }
-                  label="Accepted Tokens:"
-                />
+                      >
+                        <CloseIcon />
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
-            <a className={classes.link} href="https://google.com">
-              *Your liquidity pool is subject to law and regulations...
-            </a>
+            <div
+              className={clsx(
+                classes.rightContentWrapper,
+                commonClasses.pageContent
+              )}
+            >
+              <Typography className={clsx(classes.groupComment, "top")}>
+                Accepted Assets
+              </Typography>
+
+              <TextField
+                InputLabelProps={{ shrink: true }}
+                fullWidth
+                id="acceptedTokens"
+                label="Search by symbol or name"
+                onChange={(e) => {
+                  setFieldValue("acceptedTokens", [
+                    ...values.acceptedTokens,
+                    e.target.value,
+                  ]);
+                }}
+                placeholder="Search..."
+                required
+                select
+                value=""
+                variant="outlined"
+              >
+                {TOKENS.map((e) => (
+                  <MenuItem key={e.value} value={e.value}>
+                    {e.label}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <div className={classes.assets}>
+                {values.acceptedTokens.map((tokenValue) => {
+                  const token = TOKENS.find((e) => e.value === tokenValue);
+                  const Icon = TOKEN_ICONS[tokenValue];
+                  if (!token || !Icon) return null;
+                  return (
+                    <div className={classes.asset} key={tokenValue}>
+                      <Icon />
+                      <span>{token.label}</span>
+                      <span
+                        onClick={() => {
+                          setFieldValue(
+                            "acceptedTokens",
+                            values.acceptedTokens.filter(
+                              (e) => e !== tokenValue
+                            )
+                          );
+                        }}
+                      >
+                        <CloseIcon />
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+          <div className={classes.bottom}>
             <FormControlLabel
               className={classes.checkbox}
               control={<Checkbox color="primary" />}
@@ -432,7 +450,7 @@ const CreateLiquidityPoolForm = (props: IProps) => {
             />
             <Button
               className={classes.submit}
-              color="primary"
+              color="secondary"
               disabled={!values.accepted || !isValid}
               type="submit"
               variant="contained"
