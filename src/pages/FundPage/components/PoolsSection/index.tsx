@@ -15,11 +15,13 @@ import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
 import clsx from "clsx";
 import { TOKEN_DECIMALS } from "config/constants";
+import { useGlobal } from "contexts";
 import { BigNumber } from "ethers";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import useCommonStyles from "styles/common";
 import { ICoinPrices, IPool } from "types";
+import { AssetType } from "types/enums";
 import { formatBigNumber, numberWithCommas } from "utils";
 import { ZERO_NUMBER } from "utils/number";
 import { calculateValuation, getCoinsPrices } from "utils/token";
@@ -61,7 +63,7 @@ const mockPools: IPool[] = [
     address: "123",
     name: "COOK 10",
     symbol: "COOK100",
-    assetType: "Spot - Composite",
+    assetType: AssetType.SpotComposite,
     ckTokens: BigNumber.from("100000"),
     tokens: {
       btc: BigNumber.from("100"),
@@ -113,42 +115,22 @@ const tokenFilters = [
   { label: "BNB", value: "bnb" },
 ];
 
-const defaultCoinPrices: ICoinPrices = {
-  current: {
-    eth: ZERO_NUMBER,
-    btc: ZERO_NUMBER,
-    link: ZERO_NUMBER,
-    xrp: ZERO_NUMBER,
-    ltc: ZERO_NUMBER,
-    dot: ZERO_NUMBER,
-  },
-  prev: {
-    eth: ZERO_NUMBER,
-    btc: ZERO_NUMBER,
-    link: ZERO_NUMBER,
-    xrp: ZERO_NUMBER,
-    ltc: ZERO_NUMBER,
-    dot: ZERO_NUMBER,
-  },
-};
-
 interface IState {
   filter: {
     type: string;
     platform: string;
     token: string;
   };
-  tokenPrices: ICoinPrices;
 }
 
 export const PoolsSection = () => {
   const classes = useStyles();
   const commonClasses = useCommonStyles();
   const history = useHistory();
+  const { tokenPrices } = useGlobal();
 
   const [state, setState] = useState<IState>({
     filter: { type: "", platform: "", token: "" },
-    tokenPrices: defaultCoinPrices,
   });
 
   useEffect(() => {
@@ -245,11 +227,11 @@ export const PoolsSection = () => {
             <TableBody>
               {mockPools.map((pool) => {
                 const curValuation = calculateValuation(
-                  state.tokenPrices.current,
+                  tokenPrices.current,
                   pool.tokens
                 );
                 const prevValuation = calculateValuation(
-                  state.tokenPrices.prev,
+                  tokenPrices.prev,
                   pool.tokens
                 );
 

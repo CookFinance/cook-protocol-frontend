@@ -7,7 +7,7 @@ import {
 } from "types";
 import { entries } from "utils/type-utils";
 
-import { INFURA_PROJECT_ID } from "./constants";
+import { INFURA_PROJECT_ID, TOKEN_ICONS } from "./constants";
 
 export const networkIds = {
   MAINNET: 1,
@@ -15,12 +15,18 @@ export const networkIds = {
 } as const;
 
 export const tokenIds = {
-  btc: "btc",
   eth: "eth",
   link: "link",
   xrp: "xrp",
   ltc: "ltc",
   dot: "dot",
+  uni: "uni",
+  comp: "comp",
+  bal: "bal",
+  yfi: "yfi",
+  rep: "rep",
+  dai: "dai",
+  xlm: "xlm",
 };
 
 const networks: { [K in NetworkId]: INetwork } = {
@@ -39,11 +45,6 @@ const networks: { [K in NetworkId]: INetwork } = {
 };
 
 const knownTokens: { [K in KnownToken]: IKnownTokenData } = {
-  btc: {
-    name: "Bitcoin",
-    symbol: "btc",
-    coingeckoId: "bitcoin",
-  },
   eth: {
     name: "Ethereum",
     symbol: "eth",
@@ -68,6 +69,46 @@ const knownTokens: { [K in KnownToken]: IKnownTokenData } = {
     name: "Polkadot",
     symbol: "dot",
     coingeckoId: "polkadot",
+  },
+  uni: {
+    name: "Uniswap",
+    symbol: "uni",
+    coingeckoId: "uniswap",
+  },
+  comp: {
+    name: "Compound Coin",
+    symbol: "comp",
+    coingeckoId: "compound-coin",
+  },
+  bal: {
+    name: "Balancer",
+    symbol: "bal",
+    coingeckoId: "balancer",
+  },
+  yfi: {
+    name: "yearn.finance",
+    symbol: "yfi",
+    coingeckoId: "yearn-finance",
+  },
+  rep: {
+    name: "Augur",
+    symbol: "rep",
+    coingeckoId: "augur",
+  },
+  dai: {
+    name: "Dai",
+    symbol: "dai",
+    coingeckoId: "dai",
+  },
+  xlm: {
+    name: "Stellar",
+    symbol: "xlm",
+    coingeckoId: "stellar",
+  },
+  zrx: {
+    name: "0x",
+    symbol: "zrx",
+    coingeckoId: "0x",
   },
 };
 
@@ -108,5 +149,6 @@ export const getToken = (tokenId: KnownToken): IToken => {
     coingeckoId: token.coingeckoId,
     decimals: 18,
     address: "",
+    icon: TOKEN_ICONS[tokenId],
   };
 };

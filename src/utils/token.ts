@@ -1,8 +1,10 @@
 import axios from "axios";
 import { getToken, tokenIds } from "config/network";
+import { defaultCoinPrices } from "contexts";
 import { BigNumber, utils } from "ethers";
 import { parseEther } from "ethers/lib/utils";
 import { ICoinPrices, KnownToken } from "types";
+import { getDecimalsLimitedString } from "utils";
 
 import { ZERO_NUMBER } from "./number";
 
@@ -15,24 +17,7 @@ export function getImageUrl(tokenAddress?: string): string | undefined {
 }
 
 export const getCoinsPrices = async (): Promise<ICoinPrices> => {
-  const prices: ICoinPrices = {
-    current: {
-      eth: ZERO_NUMBER,
-      btc: ZERO_NUMBER,
-      link: ZERO_NUMBER,
-      xrp: ZERO_NUMBER,
-      ltc: ZERO_NUMBER,
-      dot: ZERO_NUMBER,
-    },
-    prev: {
-      eth: ZERO_NUMBER,
-      btc: ZERO_NUMBER,
-      link: ZERO_NUMBER,
-      xrp: ZERO_NUMBER,
-      ltc: ZERO_NUMBER,
-      dot: ZERO_NUMBER,
-    },
-  };
+  const prices: ICoinPrices = defaultCoinPrices;
 
   const promises = Object.keys(tokenIds).map(async (tokenId) => {
     const token = getToken(tokenId as KnownToken);
@@ -59,8 +44,8 @@ export const getCoinPrices = async (
   const currentPrice = prices[prices.length - 1][1];
   const prevPrice = prices[0][1];
   return {
-    current: parseEther(String(currentPrice)),
-    prev: parseEther(String(prevPrice)),
+    current: parseEther(getDecimalsLimitedString(String(currentPrice))),
+    prev: parseEther(getDecimalsLimitedString(String(prevPrice))),
   };
 };
 

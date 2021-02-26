@@ -9,3 +9,7 @@ export enum ConnectorNames {
   WalletLink = "walletlink",
   Fortmatic = "fortmatic",
 }
+
+export enum AssetType {
+  SpotComposite = "Spot Composite",
+}

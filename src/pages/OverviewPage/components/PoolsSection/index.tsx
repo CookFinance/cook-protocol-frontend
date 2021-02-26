@@ -1,17 +1,5 @@
-import {
-  FormControl,
-  MenuItem,
-  Select,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  makeStyles,
-} from "@material-ui/core";
-import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
-import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
-import clsx from "clsx";
+import { FormControl, MenuItem, Select, makeStyles } from "@material-ui/core";
+import { SortableFundsTable } from "components";
 import { TOKEN_DECIMALS } from "config/constants";
 import { useGlobal } from "contexts";
 import { BigNumber } from "ethers";
@@ -19,7 +7,8 @@ import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import useCommonStyles from "styles/common";
 import { IPool } from "types";
-import { formatBigNumber, numberWithCommas } from "utils";
+import { AssetType } from "types/enums";
+import { formatBigNumber } from "utils";
 import { ZERO_NUMBER } from "utils/number";
 import { calculateValuation } from "utils/token";
 
@@ -64,15 +53,44 @@ const mockPools: IPool[] = [
     address: "123",
     name: "COOK 10",
     symbol: "COOK100",
-    assetType: "Spot - Composite",
+    assetType: AssetType.SpotComposite,
     ckTokens: BigNumber.from("100000"),
     tokens: {
-      btc: BigNumber.from("100"),
       eth: BigNumber.from("700"),
       xrp: BigNumber.from("312000"),
       link: BigNumber.from("4333"),
       ltc: BigNumber.from("433"),
       dot: BigNumber.from("4622"),
+    },
+  },
+  {
+    id: "2",
+    address: "123",
+    name: "FundName",
+    symbol: "F100",
+    assetType: AssetType.SpotComposite,
+    ckTokens: BigNumber.from("1000000"),
+    tokens: {
+      eth: BigNumber.from("7000"),
+      xrp: BigNumber.from("3100"),
+      link: BigNumber.from("43033"),
+      ltc: BigNumber.from("433"),
+      dot: BigNumber.from("46022"),
+    },
+  },
+  {
+    id: "3",
+    address: "123",
+    name: "Name",
+    symbol: "N100",
+    assetType: AssetType.SpotComposite,
+    ckTokens: BigNumber.from("100000"),
+    tokens: {
+      eth: BigNumber.from("700"),
+      xrp: BigNumber.from("310"),
+      link: BigNumber.from("4333"),
+      ltc: BigNumber.from("433"),
+      dot: BigNumber.from("4022"),
     },
   },
 ];
@@ -83,14 +101,13 @@ const typeFilters = [
   { label: "Stablecoins", value: "stablecoins" },
 ];
 const platformFilters = [
-  { label: "Ethereum", value: "ethereum" },
-  { label: "Polkadot", value: "polkadot" },
+  { label: "Ethereum", value: "eth" },
+  { label: "Polkadot", value: "dot" },
   { label: "Binance Smart Chain", value: "bsc" },
   { label: "Huobi Eco Chain", value: "hec" },
 ];
 const tokenFilters = [
   { label: "ETH", value: "eth" },
-  { label: "BTC", value: "btc" },
   { label: "LINK", value: "link" },
   { label: "USDT", value: "usdt" },
   { label: "BNB", value: "bnb" },
@@ -184,72 +201,42 @@ export const PoolsSection = () => {
         </FormControl>
       </div>
       <div className={classes.content}>
-        <div className={commonClasses.table}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Liquidity Pool</TableCell>
-                <TableCell>Symbol</TableCell>
-                <TableCell>Price</TableCell>
-                <TableCell>Return(24h)</TableCell>
-                <TableCell>Valuation</TableCell>
-                <TableCell>Asset Type</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {mockPools.map((pool) => {
-                const curValuation = calculateValuation(
-                  tokenPrices.current,
-                  pool.tokens
-                );
-                const prevValuation = calculateValuation(
-                  tokenPrices.prev,
-                  pool.tokens
-                );
+        <div>
+          <SortableFundsTable
+            rows={mockPools.map((pool) => {
+              const curValuation = calculateValuation(
+                tokenPrices.current,
+                pool.tokens
+              );
+              const prevValuation = calculateValuation(
+                tokenPrices.prev,
+                pool.tokens
+              );
 
-                const difference = curValuation
-                  .sub(prevValuation)
-                  .mul(BigNumber.from("1000"));
+              const difference = curValuation
+                .sub(prevValuation)
+                .mul(BigNumber.from("1000"));
 
-                const return24hBigNumber = prevValuation.isZero()
-                  ? ZERO_NUMBER
-                  : difference.div(prevValuation);
+              const return24hBigNumber = prevValuation.isZero()
+                ? ZERO_NUMBER
+                : difference.div(prevValuation);
 
-                const returns24h =
-                  Number(formatBigNumber(return24hBigNumber, 0, 3)) / 1000;
+              const returns24h =
+                Number(formatBigNumber(return24hBigNumber, 0, 3)) / 1000;
 
-                const price = curValuation.div(pool.ckTokens);
-
-                return (
-                  <TableRow
-                    className={clsx(returns24h < 0 ? "negative" : "positive")}
-                    key={pool.id}
-                    onClick={() => {
-                      history.push(`/pool/${pool.id}`);
-                    }}
-                  >
-                    <TableCell>{pool.name}</TableCell>
-                    <TableCell>{pool.symbol}</TableCell>
-                    <TableCell>
-                      $
-                      {numberWithCommas(formatBigNumber(price, TOKEN_DECIMALS))}
-                    </TableCell>
-                    <TableCell>
-                      <span>
-                        {returns24h < 0 && <ArrowDropDownIcon />}
-                        {returns24h >= 0 && <ArrowDropUpIcon />}
-                        {returns24h}%
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      {formatBigNumber(curValuation, TOKEN_DECIMALS)}
-                    </TableCell>
-                    <TableCell>{pool.assetType}</TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
+              const price = Number(
+                formatBigNumber(curValuation.div(pool.ckTokens), TOKEN_DECIMALS)
+              );
+              return {
+                ...pool,
+                price,
+                returns24h,
+                valuation: Number(
+                  formatBigNumber(curValuation, TOKEN_DECIMALS)
+                ),
+              };
+            })}
+          />
         </div>
       </div>
     </div>

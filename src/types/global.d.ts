@@ -1,5 +1,5 @@
 import { BigNumber } from "ethers";
-import { THEME } from "./enums";
+import { AssetType, THEME } from "./enums";
 
 export type Maybe<T> = T | null;
 
@@ -24,6 +24,7 @@ export interface IToken {
   image?: string;
   coingeckoId: string;
   name: string;
+  icon: React.ElementType;
 }
 
 export interface IFeaturedLiquidityPool {
@@ -40,7 +41,7 @@ export interface IPool {
   address: string;
   name: string;
   symbol: string;
-  assetType: string;
+  assetType: AssetType;
   ckTokens: BigNumber;
   tokens: { [key: string]: BigNumber };
 }
@@ -53,7 +54,20 @@ export interface ITokenDistribution {
   returns24h: number;
 }
 
-export type KnownToken = "btc" | "eth" | "link" | "xrp" | "ltc" | "dot";
+export type KnownToken =
+  | "eth"
+  | "link"
+  | "xrp"
+  | "ltc"
+  | "dot"
+  | "uni"
+  | "comp"
+  | "bal"
+  | "yfi"
+  | "rep"
+  | "dai"
+  | "xlm"
+  | "zrx";
 
 export interface IKnownTokenData {
   name: string;

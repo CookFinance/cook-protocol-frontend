@@ -356,7 +356,7 @@ const CreateLiquidityPoolForm = (props: IProps) => {
                   const platform = PlATFORMS.find(
                     (e) => e.value === platformValue
                   );
-                  const Icon = TOKEN_ICONS[platformValue];
+                  const Icon = (TOKEN_ICONS as any)[platformValue];
                   if (!platform || !Icon) return null;
                   return (
                     <div className={classes.platform} key={platformValue}>
@@ -415,7 +415,7 @@ const CreateLiquidityPoolForm = (props: IProps) => {
               <div className={classes.assets}>
                 {values.acceptedTokens.map((tokenValue) => {
                   const token = TOKENS.find((e) => e.value === tokenValue);
-                  const Icon = TOKEN_ICONS[tokenValue];
+                  const Icon = (TOKEN_ICONS as any)[tokenValue];
                   if (!token || !Icon) return null;
                   return (
                     <div className={classes.asset} key={tokenValue}>
