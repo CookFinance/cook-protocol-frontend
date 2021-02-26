@@ -46,6 +46,12 @@ export interface IPool {
   tokens: { [key: string]: BigNumber };
 }
 
+export interface IPoolDetails extends IPool {
+  returns24h: number;
+  price: number;
+  valuation: number;
+}
+
 export interface ITokenDistribution {
   tokenName: string;
   quantity: number;

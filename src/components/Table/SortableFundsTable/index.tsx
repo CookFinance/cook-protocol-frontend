@@ -6,13 +6,12 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
-import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
-import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
 import { getToken } from "config/network";
 import { BigNumber } from "ethers";
 import { transparentize } from "polished";
 import React from "react";
 import { IPool, KnownToken } from "types";
+import { numberWithCommas } from "utils";
 
 interface Data extends IPool {
   returns24h: number;
@@ -21,7 +20,7 @@ interface Data extends IPool {
 }
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-  if (typeof a === "object") {
+  if (!["number", "string"].includes(typeof a[orderBy])) {
     return 0;
   }
   if (b[orderBy] < a[orderBy]) {
@@ -98,9 +97,11 @@ function EnhancedTableHead(props: EnhancedTableProps) {
   return (
     <TableHead>
       <TableRow>
-        {headCells.map((headCell) => (
+        {headCells.map((headCell, index) => (
           <TableCell
-            align={headCell.numeric ? "right" : "left"}
+            align={
+              [0, 2].includes(index) ? "left" : index === 6 ? "right" : "center"
+            }
             key={headCell.id}
             sortDirection={orderBy === headCell.id ? order : false}
           >
@@ -127,8 +128,28 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       width: "100%",
+      overflowX: "auto",
     },
     table: {
+      borderCollapse: "separate",
+      borderSpacing: "0 20px",
+      "& thead": {
+        "& tr": {
+          "& th": {
+            borderBottom: "none",
+            color: transparentize(0.5, theme.colors.primary),
+            fontSize: 14,
+            lineHeight: "21px",
+            padding: "8px",
+            "&:first-child": {
+              padding: "8px 0",
+            },
+            "&:last-child": {
+              padding: "8px 0",
+            },
+          },
+        },
+      },
       "& tr": {
         cursor: "pointer",
         transition: "all 0.3s",
@@ -138,43 +159,21 @@ const useStyles = makeStyles((theme: Theme) =>
         "& td": {
           borderBottom: "none",
           backgroundColor: theme.colors.default,
-          fontSize: 20,
-          lineHeight: "26px",
+          fontSize: 14,
+          lineHeight: "21px",
+
           "& span": {
             borderRadius: 2,
             display: "inline-flex",
             alignItems: "center",
             padding: "9px 16px",
           },
-        },
-        "&.positive": {
-          "& td": {
-            "&:first-child": {
-              borderLeft: `5px solid ${theme.colors.success}`,
-              borderRadius: "4px 0 0 4px",
-            },
-            "&:last-child": {
-              borderRadius: "0 4px 4px 0",
-            },
+          padding: "8px",
+          "&:first-child": {
+            padding: "8px 0",
           },
-          "& span": {
-            color: theme.colors.success,
-            backgroundColor: transparentize(0.8, theme.colors.success),
-          },
-        },
-        "&.negative": {
-          "& td": {
-            "&:first-child": {
-              borderLeft: `5px solid ${theme.colors.warn}`,
-              borderRadius: "4px 0 0 4px",
-            },
-            "&:last-child": {
-              borderRadius: "0 4px 4px 0",
-            },
-          },
-          "& span": {
-            color: theme.colors.warn,
-            backgroundColor: transparentize(0.8, theme.colors.warn),
+          "&:last-child": {
+            padding: "8px 0",
           },
         },
       },
@@ -193,11 +192,30 @@ const useStyles = makeStyles((theme: Theme) =>
     icon: {
       width: 16,
       height: 16,
+      color: "unset !important",
+      display: "inline-block !important",
+      padding: "0 !important",
       "& svg": {
         width: 16,
         height: 16,
       },
       marginRight: 3,
+    },
+    usd: {
+      color: theme.colors.secondary,
+    },
+    positive: {
+      color: theme.colors.success,
+    },
+    negative: {
+      color: theme.colors.warn,
+    },
+    assets: {
+      display: "flex",
+      alignItems: "center",
+      "& span": {
+        "&.more-assets": {},
+      },
     },
   })
 );
@@ -239,19 +257,19 @@ export function SortableFundsTable(props: IProps) {
             {stableSort<Data>(rows, getComparator(order, orderBy)).map(
               (row, index) => {
                 const labelId = `enhanced-table-checkbox-${index}`;
-
+                const moreAssets = Object.keys(row.tokens).length - 8;
                 return (
                   <TableRow hover key={row.name} tabIndex={-1}>
                     <TableCell
-                      component="th"
+                      align="left"
                       id={labelId}
                       padding="none"
                       scope="row"
                     >
                       {row.name}
                     </TableCell>
-                    <TableCell align="right">{row.symbol}</TableCell>
-                    <TableCell align="right">
+                    <TableCell align="center">{row.symbol}</TableCell>
+                    <TableCell align="left" className={classes.assets}>
                       {Object.keys(row.tokens)
                         .slice(0, 8)
                         .map((key) => {
@@ -263,10 +281,26 @@ export function SortableFundsTable(props: IProps) {
                             </span>
                           );
                         })}
+                      {moreAssets > 0 && (
+                        <span className="more-assets">+{moreAssets}</span>
+                      )}
                     </TableCell>
-                    <TableCell align="right">{row.price}</TableCell>
-                    <TableCell align="right">{row.returns24h}</TableCell>
-                    <TableCell align="right">{row.valuation}</TableCell>
+                    <TableCell align="center">
+                      {row.price}
+                      <span className={classes.usd}>USD</span>
+                    </TableCell>
+                    <TableCell
+                      align="center"
+                      className={
+                        row.returns24h > 0 ? classes.positive : classes.negative
+                      }
+                    >
+                      {row.returns24h > 0 ? "+ " : " "} {row.returns24h} %
+                    </TableCell>
+                    <TableCell align="center">
+                      {numberWithCommas(row.valuation)}
+                      <span className={classes.usd}>USD</span>
+                    </TableCell>
                     <TableCell align="right">{row.assetType}</TableCell>
                   </TableRow>
                 );

@@ -6,7 +6,7 @@ import { BigNumber } from "ethers";
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import useCommonStyles from "styles/common";
-import { IPool } from "types";
+import { IPool, IPoolDetails } from "types";
 import { AssetType } from "types/enums";
 import { formatBigNumber } from "utils";
 import { ZERO_NUMBER } from "utils/number";
@@ -33,10 +33,10 @@ const useStyles = makeStyles((theme) => ({
   },
   filterSelect: {
     minWidth: 140,
-    filter: "drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))",
     backgroundColor: theme.colors.default,
     marginTop: "0px !important",
     padding: "8px 10px",
+    border: `1px solid ${theme.colors.third}`,
   },
   filterSelectLabel: {
     color: `${theme.colors.third} !important`,
@@ -46,54 +46,6 @@ const useStyles = makeStyles((theme) => ({
     marginTop: 24,
   },
 }));
-
-const mockPools: IPool[] = [
-  {
-    id: "1",
-    address: "123",
-    name: "COOK 10",
-    symbol: "COOK100",
-    assetType: AssetType.SpotComposite,
-    ckTokens: BigNumber.from("100000"),
-    tokens: {
-      eth: BigNumber.from("700"),
-      xrp: BigNumber.from("312000"),
-      link: BigNumber.from("4333"),
-      ltc: BigNumber.from("433"),
-      dot: BigNumber.from("4622"),
-    },
-  },
-  {
-    id: "2",
-    address: "123",
-    name: "FundName",
-    symbol: "F100",
-    assetType: AssetType.SpotComposite,
-    ckTokens: BigNumber.from("1000000"),
-    tokens: {
-      eth: BigNumber.from("7000"),
-      xrp: BigNumber.from("3100"),
-      link: BigNumber.from("43033"),
-      ltc: BigNumber.from("433"),
-      dot: BigNumber.from("46022"),
-    },
-  },
-  {
-    id: "3",
-    address: "123",
-    name: "Name",
-    symbol: "N100",
-    assetType: AssetType.SpotComposite,
-    ckTokens: BigNumber.from("100000"),
-    tokens: {
-      eth: BigNumber.from("700"),
-      xrp: BigNumber.from("310"),
-      link: BigNumber.from("4333"),
-      ltc: BigNumber.from("433"),
-      dot: BigNumber.from("4022"),
-    },
-  },
-];
 
 const typeFilters = [
   { label: "Spot Composite", value: "spot-composite" },
@@ -121,12 +73,15 @@ interface IState {
   };
 }
 
-export const PoolsSection = () => {
+interface IProps {
+  pools: IPoolDetails[];
+}
+
+export const PoolsSection = (props: IProps) => {
   const classes = useStyles();
   const commonClasses = useCommonStyles();
   const history = useHistory();
 
-  const { tokenPrices } = useGlobal();
   const [state, setState] = useState<IState>({
     filter: { type: "", platform: "", token: "" },
   });
@@ -202,41 +157,7 @@ export const PoolsSection = () => {
       </div>
       <div className={classes.content}>
         <div>
-          <SortableFundsTable
-            rows={mockPools.map((pool) => {
-              const curValuation = calculateValuation(
-                tokenPrices.current,
-                pool.tokens
-              );
-              const prevValuation = calculateValuation(
-                tokenPrices.prev,
-                pool.tokens
-              );
-
-              const difference = curValuation
-                .sub(prevValuation)
-                .mul(BigNumber.from("1000"));
-
-              const return24hBigNumber = prevValuation.isZero()
-                ? ZERO_NUMBER
-                : difference.div(prevValuation);
-
-              const returns24h =
-                Number(formatBigNumber(return24hBigNumber, 0, 3)) / 1000;
-
-              const price = Number(
-                formatBigNumber(curValuation.div(pool.ckTokens), TOKEN_DECIMALS)
-              );
-              return {
-                ...pool,
-                price,
-                returns24h,
-                valuation: Number(
-                  formatBigNumber(curValuation, TOKEN_DECIMALS)
-                ),
-              };
-            })}
-          />
+          <SortableFundsTable rows={props.pools} />
         </div>
       </div>
     </div>

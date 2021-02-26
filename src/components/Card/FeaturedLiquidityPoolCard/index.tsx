@@ -2,46 +2,44 @@ import { Divider, Typography, makeStyles } from "@material-ui/core";
 import clsx from "clsx";
 import { transparentize } from "polished";
 import React from "react";
-import { IFeaturedLiquidityPool } from "types";
+import { IPoolDetails } from "types";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    border: `1px solid ${theme.colors.primary}`,
+    border: `1px solid ${theme.colors.third}`,
     borderRadius: 8,
     padding: "3px 23px",
-    backgroundColor: theme.colors.primary,
-    boxShadow: "0px 0px 4px 4px rgba(13, 21, 45, 0.5)",
   },
   title: {
-    fontSize: 24,
-    color: theme.colors.default,
+    fontSize: 20,
+    color: theme.colors.reverse,
     fontWeight: 200,
     padding: "30px 0",
-    lineHeight: "32px",
+    lineHeight: "24px",
   },
   content: {
     padding: "40px 0",
   },
   divider: {
-    backgroundColor: transparentize(0.7, theme.colors.default),
+    backgroundColor: transparentize(0.7, theme.colors.reverse),
   },
   itemRow: {
     "& + &": {
-      marginTop: 24,
+      marginTop: 8,
     },
-    fontSize: 22,
-    lineHeight: "29px",
+    fontSize: 14,
+    lineHeight: "20px",
     display: "flex",
     alignItems: "center",
     "& div": {
       minWidth: 160,
-      color: transparentize(0.7, theme.colors.default),
+      color: transparentize(0.7, theme.colors.reverse),
     },
     "& span": {
-      fontSize: 26,
-      lineHeight: "34px",
+      fontSize: 14,
+      lineHeight: "20px",
       flex: 1,
-      color: theme.colors.default,
+      color: theme.colors.reverse,
       "&.positive": {
         color: theme.colors.success,
       },
@@ -53,20 +51,20 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface IProps {
-  data: IFeaturedLiquidityPool;
+  data: IPoolDetails;
   className?: string;
 }
 
 export const FeaturedLiquidityPoolCard = (props: IProps) => {
   const classes = useStyles();
   const {
-    data: { returns24h, riskIndex, sector, title },
+    data: { assetType, name, returns24h, tokens },
   } = props;
 
   return (
     <div className={clsx(classes.root, props.className)}>
       <Typography align="center" className={classes.title}>
-        {title}
+        {name}
       </Typography>
       <Divider className={classes.divider} />
       <div className={classes.content}>
@@ -83,11 +81,11 @@ export const FeaturedLiquidityPoolCard = (props: IProps) => {
         </div>
         <div className={classes.itemRow}>
           <div>Risk Index:</div>
-          <span>{riskIndex}</span>
+          <span>{5}</span>
         </div>
         <div className={classes.itemRow}>
           <div>Sector:</div>
-          <span>{sector}</span>
+          <span>{assetType}</span>
         </div>
       </div>
     </div>
