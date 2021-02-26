@@ -1,6 +1,5 @@
 import {
   FormControl,
-  InputLabel,
   MenuItem,
   Select,
   Table,
@@ -8,21 +7,21 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  Typography,
   makeStyles,
 } from "@material-ui/core";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
 import clsx from "clsx";
 import { TOKEN_DECIMALS } from "config/constants";
+import { useGlobal } from "contexts";
 import { BigNumber } from "ethers";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import useCommonStyles from "styles/common";
-import { ICoinPrices, IPool } from "types";
+import { IPool } from "types";
 import { formatBigNumber, numberWithCommas } from "utils";
 import { ZERO_NUMBER } from "utils/number";
-import { calculateValuation, getCoinsPrices } from "utils/token";
+import { calculateValuation } from "utils/token";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -76,26 +75,6 @@ const mockPools: IPool[] = [
       dot: BigNumber.from("4622"),
     },
   },
-  // {
-  //   id: "12",
-  //   address: "1233",
-  //   name: "Liquidity Pool",
-  //   symbol: "DSC",
-  //   price: 150,
-  //   returns24h: -2,
-  //   valuation: 12500000,
-  //   assetType: "Smart Contract",
-  // },
-  // {
-  //   id: "13",
-  //   address: "1234",
-  //   name: "DeFi Liquidity Pool",
-  //   symbol: "DEFILEND",
-  //   price: 120,
-  //   returns24h: 15,
-  //   valuation: 15500000,
-  //   assetType: "Lending, Stablecoins",
-  // },
 ];
 
 const typeFilters = [
@@ -117,32 +96,12 @@ const tokenFilters = [
   { label: "BNB", value: "bnb" },
 ];
 
-const defaultCoinPrices: ICoinPrices = {
-  current: {
-    eth: ZERO_NUMBER,
-    btc: ZERO_NUMBER,
-    link: ZERO_NUMBER,
-    xrp: ZERO_NUMBER,
-    ltc: ZERO_NUMBER,
-    dot: ZERO_NUMBER,
-  },
-  prev: {
-    eth: ZERO_NUMBER,
-    btc: ZERO_NUMBER,
-    link: ZERO_NUMBER,
-    xrp: ZERO_NUMBER,
-    ltc: ZERO_NUMBER,
-    dot: ZERO_NUMBER,
-  },
-};
-
 interface IState {
   filter: {
     type: string;
     platform: string;
     token: string;
   };
-  tokenPrices: ICoinPrices;
 }
 
 export const PoolsSection = () => {
@@ -150,18 +109,10 @@ export const PoolsSection = () => {
   const commonClasses = useCommonStyles();
   const history = useHistory();
 
+  const { tokenPrices } = useGlobal();
   const [state, setState] = useState<IState>({
     filter: { type: "", platform: "", token: "" },
-    tokenPrices: defaultCoinPrices,
   });
-
-  useEffect(() => {
-    const loadCoinPrices = async () => {
-      const prices = await getCoinsPrices();
-      setState((prev) => ({ ...prev, tokenPrices: prices }));
-    };
-    loadCoinPrices();
-  }, []);
 
   const onChangeFilter = (key: string) => (
     event: React.ChangeEvent<{
@@ -248,11 +199,11 @@ export const PoolsSection = () => {
             <TableBody>
               {mockPools.map((pool) => {
                 const curValuation = calculateValuation(
-                  state.tokenPrices.current,
+                  tokenPrices.current,
                   pool.tokens
                 );
                 const prevValuation = calculateValuation(
-                  state.tokenPrices.prev,
+                  tokenPrices.prev,
                   pool.tokens
                 );
 

@@ -80,4 +80,5 @@ export interface ICreateFund {
 
 export interface IGlobalData {
   createdPools: ICreateFund[];
+  tokenPrices: ICoinPrices;
 }
