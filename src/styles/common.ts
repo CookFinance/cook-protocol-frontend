@@ -78,7 +78,7 @@ const useCommonStyles = makeStyles((theme) => ({
         "& tr": {
           "& th": {
             borderBottom: "none",
-            color: transparentize(0.5, theme.colors.default),
+            color: transparentize(0.5, theme.colors.primary),
             fontSize: 20,
             lineHeight: "26px",
           },
@@ -93,7 +93,7 @@ const useCommonStyles = makeStyles((theme) => ({
           },
           "& td": {
             borderBottom: "none",
-            backgroundColor: theme.colors.primary,
+            backgroundColor: theme.colors.default,
             fontSize: 20,
             lineHeight: "26px",
             "& span": {

@@ -34,6 +34,11 @@ const routes = [
         component: lazy(() => import("pages/MiningPage")),
       },
       {
+        exact: false,
+        path: "/overview",
+        component: lazy(() => import("pages/OverviewPage")),
+      },
+      {
         layout: AuthGuard,
         exact: false,
         path: "/profile",

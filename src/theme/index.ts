@@ -56,7 +56,7 @@ const themesOptions = [
     palette: {
       type: "dark",
       action: {
-        active: "rgba(255, 255, 255, 0.54)",
+        active: "#21212188",
         hover: "rgba(255, 255, 255, 0.04)",
         selected: "rgba(255, 255, 255, 0.08)",
 
@@ -68,7 +68,7 @@ const themesOptions = [
         paper: "#282C34",
       },
       primary: {
-        main: "#424242",
+        main: "#212121",
       },
       secondary: {
         main: "#7B8A95",
@@ -105,18 +105,18 @@ const themesOptions = [
     palette: {
       type: "light",
       action: {
-        active: "rgba(255, 255, 255, 0.54)",
+        active: "#21212188",
         hover: "rgba(255, 255, 255, 0.04)",
         selected: "rgba(255, 255, 255, 0.08)",
         focus: "rgba(255, 255, 255, 0.12)",
       },
       background: {
         default: colors.common.white,
-        dark: "#424242",
+        dark: "#212121",
         paper: colors.common.white,
       },
       primary: {
-        main: "#424242",
+        main: "#212121",
       },
       secondary: {
         main: "#7B8A95",

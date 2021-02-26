@@ -9,6 +9,7 @@ import {
   Typography,
   makeStyles,
 } from "@material-ui/core";
+import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import CloseIcon from "@material-ui/icons/Close";
 import clsx from "clsx";
 import { PlATFORMS, TOKENS, TOKEN_ICONS } from "config/constants";
@@ -65,12 +66,12 @@ const useStyles = makeStyles((theme) => ({
 
   checkbox: {
     display: "flex",
-    color: transparentize(0.5, theme.colors.secondary),
+    color: theme.colors.reverse,
     fontSize: 24,
     "& svg": {
       width: 30,
       height: 30,
-      color: transparentize(0.5, theme.colors.default),
+      color: theme.colors.reverse,
     },
   },
   submit: {
@@ -441,7 +442,7 @@ const CreateLiquidityPoolForm = (props: IProps) => {
           <div className={classes.bottom}>
             <FormControlLabel
               className={classes.checkbox}
-              control={<Checkbox color="primary" />}
+              control={<Checkbox />}
               label="I accepted the terms & condition"
               labelPlacement="end"
               name="accepted"
@@ -455,7 +456,8 @@ const CreateLiquidityPoolForm = (props: IProps) => {
               type="submit"
               variant="contained"
             >
-              Create
+              Create&nbsp;&nbsp;&nbsp;
+              <ChevronRightIcon />
             </Button>
           </div>
         </Form>
