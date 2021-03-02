@@ -2,9 +2,10 @@ import axios from "axios";
 import { getToken, tokenIds } from "config/network";
 import { defaultCoinPrices } from "contexts";
 import { BigNumber, utils } from "ethers";
-import { parseEther } from "ethers/lib/utils";
+import { parseEther, parseUnits } from "ethers/lib/utils";
+import { getCoingeckoService } from "services/coingecko";
 import { ICoinPrices, KnownToken } from "types";
-import { getDecimalsLimitedString } from "utils";
+import { formatBigNumber, getDecimalsLimitedString } from "utils";
 
 import { ZERO_NUMBER } from "./number";
 
@@ -15,6 +16,68 @@ export function getImageUrl(tokenAddress?: string): string | undefined {
   tokenAddress = utils.getAddress(tokenAddress);
   return `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${tokenAddress}/logo.png`;
 }
+
+export const getCoinsChartData = async (
+  tokens: {
+    [key: string]: BigNumber;
+  },
+  ckTokens: BigNumber
+) => {
+  const tokenIds = Object.keys(tokens);
+  const date = new Date();
+  const to = Math.floor(date.getTime() / 1000);
+  date.setFullYear(date.getFullYear() - 1);
+  const from = Math.floor(date.getTime() / 1000);
+
+  const coinInfos: { [key: string]: Array<Array<number>> } = {};
+
+  const promises = tokenIds.map(async (tokenId) => {
+    const oneInfo = await getCoinChartInfo(tokenId as KnownToken, from, to);
+    coinInfos[tokenId] = oneInfo as Array<Array<number>>;
+  });
+
+  await Promise.all(promises);
+
+  const finalInfo: Array<Array<number>> = [];
+  let isEnd = false;
+  while (!isEnd) {
+    let total: BigNumber = ZERO_NUMBER;
+    let timestamp = 0;
+    const currentLength = finalInfo.length;
+
+    tokenIds.forEach((tokenId) => {
+      const totalLength = coinInfos[tokenId].length;
+      timestamp = coinInfos[tokenId][totalLength - currentLength - 1][0];
+      const price = coinInfos[tokenId][totalLength - currentLength - 1][1];
+
+      total = total.add(
+        tokens[tokenId].mul(
+          parseEther(getDecimalsLimitedString(Number(price).toFixed(6)))
+        )
+      );
+      if (totalLength - currentLength - 1 === 0) {
+        isEnd = true;
+      }
+    });
+    const lpPrice = total.div(ckTokens);
+
+    finalInfo.unshift([timestamp, Number(formatBigNumber(lpPrice, 18, 6))]);
+  }
+
+  return finalInfo;
+};
+
+export const getCoinChartInfo = async (
+  id: KnownToken,
+  from: number,
+  to: number
+) => {
+  const token = getToken(id);
+  const endPoint = `https://api.coingecko.com/api/v3/coins/${token.coingeckoId}/market_chart/range?vs_currency=usd&from=${from}&to=${to}`;
+  const coingeckoService = getCoingeckoService();
+  const response = await coingeckoService.getData(endPoint);
+  return response.data.prices;
+};
 
 export const getCoinsPrices = async (): Promise<ICoinPrices> => {
   const prices: ICoinPrices = defaultCoinPrices;

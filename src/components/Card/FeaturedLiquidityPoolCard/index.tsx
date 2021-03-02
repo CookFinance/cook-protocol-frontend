@@ -1,8 +1,10 @@
 import { Divider, Typography, makeStyles } from "@material-ui/core";
 import clsx from "clsx";
+import { FundChart } from "components/Chart";
+import { getToken } from "config/network";
 import { transparentize } from "polished";
 import React from "react";
-import { IPoolDetails } from "types";
+import { IPoolDetails, KnownToken } from "types";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -20,9 +22,6 @@ const useStyles = makeStyles((theme) => ({
   content: {
     padding: "40px 0",
   },
-  divider: {
-    backgroundColor: transparentize(0.7, theme.colors.reverse),
-  },
   itemRow: {
     "& + &": {
       marginTop: 8,
@@ -32,8 +31,8 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     "& div": {
-      minWidth: 160,
-      color: transparentize(0.7, theme.colors.reverse),
+      flex: 1,
+      color: theme.colors.secondary,
     },
     "& span": {
       fontSize: 14,
@@ -48,6 +47,25 @@ const useStyles = makeStyles((theme) => ({
       },
     },
   },
+  assets: {
+    display: "flex",
+    alignItems: "center",
+    "& span": {
+      flex: "unset",
+    },
+  },
+  icon: {
+    width: 16,
+    height: 16,
+    color: "unset !important",
+    display: "inline-block !important",
+    padding: "0 !important",
+    "& svg": {
+      width: 16,
+      height: 16,
+    },
+    marginRight: 3,
+  },
 }));
 
 interface IProps {
@@ -60,13 +78,14 @@ export const FeaturedLiquidityPoolCard = (props: IProps) => {
   const {
     data: { assetType, name, returns24h, tokens },
   } = props;
+  const moreAssets = Object.keys(tokens).length - 4;
 
   return (
     <div className={clsx(classes.root, props.className)}>
       <Typography align="center" className={classes.title}>
         {name}
       </Typography>
-      <Divider className={classes.divider} />
+      <FundChart data={props.data} />
       <div className={classes.content}>
         <div className={classes.itemRow}>
           <div>Returns(24h):</div>
@@ -86,6 +105,25 @@ export const FeaturedLiquidityPoolCard = (props: IProps) => {
         <div className={classes.itemRow}>
           <div>Sector:</div>
           <span>{assetType}</span>
+        </div>
+        <div className={classes.itemRow}>
+          <div>Assets:</div>
+          <span className={classes.assets}>
+            {Object.keys(tokens)
+              .slice(0, 4)
+              .map((key) => {
+                const token = getToken(key as KnownToken);
+                const { icon: Icon } = token;
+                return (
+                  <span className={classes.icon} key={token.name}>
+                    <Icon />
+                  </span>
+                );
+              })}
+            {moreAssets > 0 && (
+              <span className="more-assets">+{moreAssets}</span>
+            )}
+          </span>
         </div>
       </div>
     </div>

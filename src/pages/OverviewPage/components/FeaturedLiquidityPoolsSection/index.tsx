@@ -6,11 +6,6 @@ import { IPoolDetails } from "types";
 const useStyles = makeStyles((theme) => ({
   root: {},
 
-  title: {
-    fontSize: 32,
-    color: theme.colors.default,
-    fontWeight: "bold",
-  },
   content: {
     paddingTop: 24,
   },

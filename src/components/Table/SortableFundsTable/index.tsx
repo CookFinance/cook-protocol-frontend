@@ -140,12 +140,12 @@ const useStyles = makeStyles((theme: Theme) =>
             color: transparentize(0.5, theme.colors.primary),
             fontSize: 14,
             lineHeight: "21px",
-            padding: "8px",
+            padding: "4px",
             "&:first-child": {
-              padding: "8px 0",
+              padding: "4px 0",
             },
             "&:last-child": {
-              padding: "8px 0",
+              padding: "4px 0",
             },
           },
         },
@@ -168,12 +168,12 @@ const useStyles = makeStyles((theme: Theme) =>
             alignItems: "center",
             padding: "9px 16px",
           },
-          padding: "8px",
+          padding: "4px",
           "&:first-child": {
-            padding: "8px 0",
+            padding: "4px 0",
           },
           "&:last-child": {
-            padding: "8px 0",
+            padding: "4px 0",
           },
         },
       },
@@ -269,21 +269,23 @@ export function SortableFundsTable(props: IProps) {
                       {row.name}
                     </TableCell>
                     <TableCell align="center">{row.symbol}</TableCell>
-                    <TableCell align="left" className={classes.assets}>
-                      {Object.keys(row.tokens)
-                        .slice(0, 8)
-                        .map((key) => {
-                          const token = getToken(key as KnownToken);
-                          const { icon: Icon } = token;
-                          return (
-                            <span className={classes.icon} key={token.name}>
-                              <Icon />
-                            </span>
-                          );
-                        })}
-                      {moreAssets > 0 && (
-                        <span className="more-assets">+{moreAssets}</span>
-                      )}
+                    <TableCell align="left">
+                      <div className={classes.assets}>
+                        {Object.keys(row.tokens)
+                          .slice(0, 8)
+                          .map((key) => {
+                            const token = getToken(key as KnownToken);
+                            const { icon: Icon } = token;
+                            return (
+                              <span className={classes.icon} key={token.name}>
+                                <Icon />
+                              </span>
+                            );
+                          })}
+                        {moreAssets > 0 && (
+                          <span className="more-assets">+{moreAssets}</span>
+                        )}
+                      </div>
                     </TableCell>
                     <TableCell align="center">
                       {row.price}
