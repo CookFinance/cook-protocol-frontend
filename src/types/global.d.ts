@@ -1,5 +1,5 @@
 import { BigNumber } from "ethers";
-import { AssetType, THEME } from "./enums";
+import { AssetType, ETransactionItemType, THEME } from "./enums";
 
 export type Maybe<T> = T | null;
 
@@ -101,4 +101,15 @@ export interface ICreateFund {
 export interface IGlobalData {
   createdPools: ICreateFund[];
   tokenPrices: ICoinPrices;
+  ethBalance: BigNumber;
+}
+
+export interface ITransactionItem {
+  txId: string;
+  type: ETransactionItemType;
+  value: {
+    token: KnownToken;
+    amount: BigNumber;
+  };
+  timestamp: number;
 }

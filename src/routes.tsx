@@ -39,6 +39,16 @@ const routes = [
         component: lazy(() => import("pages/OverviewPage")),
       },
       {
+        exact: true,
+        path: "/my-funds",
+        component: lazy(() => import("pages/MyFundsPage")),
+      },
+      {
+        exact: true,
+        path: "/my-invest",
+        component: lazy(() => import("pages/MyInvestPage")),
+      },
+      {
         layout: AuthGuard,
         exact: false,
         path: "/profile",

@@ -1,3 +1,4 @@
+import { useConnectedWeb3Context } from "contexts/connectedWeb3";
 import React, { useEffect, useState } from "react";
 import { ICoinPrices, ICreateFund, IGlobalData, Maybe } from "types";
 import { ZERO_NUMBER } from "utils/number";
@@ -44,6 +45,7 @@ const GlobalContext = React.createContext<
   createdPools: [],
   tokenPrices: defaultCoinPrices,
   addFund: (_: ICreateFund) => {},
+  ethBalance: ZERO_NUMBER,
 });
 
 export const useGlobal = () => {
@@ -60,7 +62,9 @@ export const GlobalProvider: React.FC = (props) => {
   const [state, setState] = useState<IGlobalData>({
     createdPools: [],
     tokenPrices: defaultCoinPrices,
+    ethBalance: ZERO_NUMBER,
   });
+  const { account, library: provider } = useConnectedWeb3Context();
 
   const addFund = (payload: ICreateFund) => {
     setState((prev) => ({
@@ -76,6 +80,26 @@ export const GlobalProvider: React.FC = (props) => {
     };
     loadCoinPrices();
   }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadEthBalance = async () => {
+      setState((prev) => ({ ...prev, ethBalance: ZERO_NUMBER }));
+      if (provider) {
+        const balance = await provider.getBalance(account || "");
+        if (isMounted) {
+          setState((prev) => ({ ...prev, ethBalance: balance }));
+        }
+      }
+    };
+
+    loadEthBalance();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [provider]);
 
   return (
     <GlobalContext.Provider value={{ ...state, addFund }}>

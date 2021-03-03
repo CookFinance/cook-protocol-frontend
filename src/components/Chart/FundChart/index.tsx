@@ -56,8 +56,10 @@ export const FundChart = (props: IProps) => {
     chart: {
       backgroundColor: "#0000",
       zoomType: "x",
+      height: 140,
     },
     rangeSelector: {
+      enabled: undefined,
       buttonPosition: { align: "right" },
       buttonTheme: {
         stroke: "#A6A9B7",
@@ -76,27 +78,13 @@ export const FundChart = (props: IProps) => {
         title: {
           text: "",
         },
-        height: "60%",
+        height: "100%",
         lineWidth: 0,
         gridLineWidth: 0,
         resize: {
           enabled: true,
         },
-      },
-      {
-        labels: {
-          align: "right",
-          x: -3,
-        },
-        title: {
-          text: "Volume",
-        },
-        top: "65%",
-        height: "35%",
-        offset: 0,
-        lineWidth: 0,
-        gridLineWidth: 0,
-        tickWidth: 0,
+        visible: false,
       },
     ],
 
@@ -106,6 +94,7 @@ export const FundChart = (props: IProps) => {
       gridLineWidth: 0,
       lineWidth: 0,
       tickWidth: 0,
+      visible: false,
     },
 
     tooltip: {
@@ -157,7 +146,6 @@ export const FundChart = (props: IProps) => {
           <HighchartsReact
             constructorType={"stockChart"}
             highcharts={Highstockcharts}
-            // highCharts={Highcharts}
             options={options}
           />
         )}

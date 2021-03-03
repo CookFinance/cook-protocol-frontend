@@ -1,14 +1,20 @@
 import { Button, Popover, Typography, makeStyles } from "@material-ui/core";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 import clsx from "clsx";
-import { STORAGE_KEY_CONNECTOR } from "config/constants";
-import { useConnectedWeb3Context } from "contexts";
+import { STORAGE_KEY_CONNECTOR, TOKEN_DECIMALS } from "config/constants";
+import { useConnectedWeb3Context, useGlobal } from "contexts";
 import { transparentize } from "polished";
 import React from "react";
-import { shortenAddress } from "utils";
+import { formatBigNumber, numberWithCommas, shortenAddress } from "utils";
 
 const useStyles = makeStyles((theme) => ({
-  root: {},
+  root: {
+    display: "flex",
+    alignItems: "center",
+    "& > * + *": {
+      marginLeft: 16,
+    },
+  },
   connectButton: {
     backgroundColor: theme.colors.primary,
     color: theme.colors.default,
@@ -40,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   infoButton: {
-    width: 160,
+    minWidth: 140,
     height: 40,
     fontSize: 16,
     lineHeight: "28px",
@@ -57,6 +63,22 @@ const useStyles = makeStyles((theme) => ({
       transform: "rotate(180deg)",
     },
   },
+  swapButton: {
+    height: 40,
+    fontSize: 16,
+    lineHeight: "28px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: theme.colors.primary,
+    color: theme.colors.default,
+    "& span": {
+      textTransform: "none",
+    },
+    "&:hover": {
+      color: theme.colors.secondary,
+    },
+  },
 }));
 
 export const AccountInfoBar = () => {
@@ -66,6 +88,7 @@ export const AccountInfoBar = () => {
     rawWeb3Context,
     setWalletConnectModalOpened,
   } = useConnectedWeb3Context();
+  const { ethBalance } = useGlobal();
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
@@ -95,6 +118,16 @@ export const AccountInfoBar = () => {
     <div className={classes.root}>
       {account ? (
         <>
+          <Button
+            className={classes.infoButton}
+            color="secondary"
+            variant="outlined"
+          >
+            <Typography>
+              {numberWithCommas(formatBigNumber(ethBalance, TOKEN_DECIMALS))}{" "}
+              ETH
+            </Typography>
+          </Button>
           <Button
             className={classes.infoButton}
             color="secondary"
@@ -134,6 +167,13 @@ export const AccountInfoBar = () => {
               Disconnect
             </div>
           </Popover>
+          <Button
+            className={classes.swapButton}
+            color="secondary"
+            variant="outlined"
+          >
+            <Typography>Swap with Uniswap</Typography>
+          </Button>
         </>
       ) : (
         <Button

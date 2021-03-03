@@ -13,3 +13,8 @@ export enum ConnectorNames {
 export enum AssetType {
   SpotComposite = "Spot Composite",
 }
+
+export enum ETransactionItemType {
+  Buy = "Bought",
+  Sell = "Sell",
+}

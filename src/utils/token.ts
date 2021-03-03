@@ -26,7 +26,7 @@ export const getCoinsChartData = async (
   const tokenIds = Object.keys(tokens);
   const date = new Date();
   const to = Math.floor(date.getTime() / 1000);
-  date.setFullYear(date.getFullYear() - 1);
+  date.setMonth(date.getMonth() - 3);
   const from = Math.floor(date.getTime() / 1000);
 
   const coinInfos: { [key: string]: Array<Array<number>> } = {};

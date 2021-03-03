@@ -1,11 +1,12 @@
 import { makeStyles } from "@material-ui/core";
+import { transparentize } from "polished";
 import React from "react";
 import { NavLink, matchPath, useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     textDecoration: "none",
-    color: theme.colors.reverse,
+    color: transparentize(0.3, theme.colors.reverse),
     height: 24,
     transition: "all 0.5s",
     display: "flex",
