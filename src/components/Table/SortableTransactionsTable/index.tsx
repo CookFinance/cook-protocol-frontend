@@ -7,17 +7,23 @@ import TableRow from "@material-ui/core/TableRow";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
-import { getToken } from "config/network";
+import { ReactComponent as ArrowDownIcon } from "assets/svgs/arrow_down.svg";
+import { ReactComponent as ArrowRightIcon } from "assets/svgs/arrow_right.svg";
 import { BigNumber } from "ethers";
 import { transparentize } from "polished";
 import React from "react";
-import { IPool, KnownToken } from "types";
-import { numberWithCommas } from "utils";
+import { ITransactionItem } from "types";
+import { ETransactionItemType } from "types/enums";
 
-interface Data extends IPool {
-  returns24h: number;
-  price: number;
-  valuation: number;
+const Icons = {
+  [ETransactionItemType.Buy]: ArrowDownIcon,
+  [ETransactionItemType.Sell]: ArrowRightIcon,
+};
+
+interface Data extends ITransactionItem {
+  amount: number;
+  date: string;
+  time: string;
 }
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -65,16 +71,12 @@ interface HeadCell {
 
 const headCells: HeadCell[] = [
   {
-    id: "name",
+    id: "type",
     numeric: false,
-    label: "Fund",
+    label: "Type",
   },
-  { id: "symbol", numeric: false, label: "Symbol" },
-  { id: "tokens", numeric: false, label: "Assets" },
-  { id: "price", numeric: true, label: "Price" },
-  { id: "returns24h", numeric: true, label: "Return (24h)" },
-  { id: "valuation", numeric: true, label: "Valuation" },
-  { id: "assetType", numeric: true, label: "Asset Type" },
+  { id: "amount", numeric: false, label: "Value" },
+  { id: "timestamp", numeric: false, label: "Date" },
 ];
 
 interface EnhancedTableProps {
@@ -98,11 +100,9 @@ function EnhancedTableHead(props: EnhancedTableProps) {
   return (
     <TableHead>
       <TableRow>
-        {headCells.map((headCell, index) => (
+        {headCells.map((headCell) => (
           <TableCell
-            align={
-              [0, 2].includes(index) ? "left" : index === 6 ? "right" : "center"
-            }
+            align="left"
             key={headCell.id}
             sortDirection={orderBy === headCell.id ? order : false}
           >
@@ -163,13 +163,6 @@ const useStyles = makeStyles((theme: Theme) =>
           backgroundColor: theme.colors.default,
           fontSize: 14,
           lineHeight: "21px",
-
-          "& span": {
-            borderRadius: 2,
-            display: "inline-flex",
-            alignItems: "center",
-            padding: "9px 16px",
-          },
           padding: "4px",
           "&:first-child": {
             padding: "4px 0",
@@ -203,21 +196,15 @@ const useStyles = makeStyles((theme: Theme) =>
       },
       marginRight: 3,
     },
-    usd: {
+    value: {
+      color: theme.colors.primary,
+    },
+    unit: {
       color: theme.colors.secondary,
     },
-    positive: {
-      color: theme.colors.success,
-    },
-    negative: {
-      color: theme.colors.warn,
-    },
-    assets: {
+    info: {
       display: "flex",
       alignItems: "center",
-      "& span": {
-        "&.more-assets": {},
-      },
     },
   })
 );
@@ -226,11 +213,11 @@ interface IProps {
   rows: Data[];
 }
 
-export const SortableFundsTable = (props: IProps) => {
+export const SortableTransactionsTable = (props: IProps) => {
   const classes = useStyles();
   const [order, setOrder] = React.useState<Order>("asc");
   const { rows } = props;
-  const [orderBy, setOrderBy] = React.useState<keyof Data>("name");
+  const [orderBy, setOrderBy] = React.useState<keyof Data>("timestamp");
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -259,53 +246,31 @@ export const SortableFundsTable = (props: IProps) => {
             {stableSort<Data>(rows, getComparator(order, orderBy)).map(
               (row, index) => {
                 const labelId = `enhanced-table-checkbox-${index}`;
-                const moreAssets = Object.keys(row.tokens).length - 8;
+                const Icon = Icons[row.type];
                 return (
-                  <TableRow hover key={row.name} tabIndex={-1}>
+                  <TableRow hover key={row.txId} tabIndex={-1}>
                     <TableCell
                       align="left"
                       id={labelId}
                       padding="none"
                       scope="row"
                     >
-                      {row.name}
-                    </TableCell>
-                    <TableCell align="center">{row.symbol}</TableCell>
-                    <TableCell align="left">
-                      <div className={classes.assets}>
-                        {Object.keys(row.tokens)
-                          .slice(0, 8)
-                          .map((key) => {
-                            const token = getToken(key as KnownToken);
-                            const { icon: Icon } = token;
-                            return (
-                              <span className={classes.icon} key={token.name}>
-                                <Icon />
-                              </span>
-                            );
-                          })}
-                        {moreAssets > 0 && (
-                          <span className="more-assets">+{moreAssets}</span>
-                        )}
+                      <div className={classes.info}>
+                        <Icon />
+                        &nbsp;
+                        {row.type}
                       </div>
                     </TableCell>
-                    <TableCell align="center">
-                      {row.price}
-                      <span className={classes.usd}>USD</span>
+                    <TableCell align="left">
+                      <span className={classes.value}>{row.amount}</span>&nbsp;
+                      <span className={classes.unit}>
+                        {row.value.token.toUpperCase()}
+                      </span>
                     </TableCell>
-                    <TableCell
-                      align="center"
-                      className={
-                        row.returns24h > 0 ? classes.positive : classes.negative
-                      }
-                    >
-                      {row.returns24h > 0 ? "+ " : " "} {row.returns24h} %
+                    <TableCell align="left">
+                      <span className={classes.value}>{row.date}</span>&nbsp;
+                      <span className={classes.unit}>{row.time}</span>
                     </TableCell>
-                    <TableCell align="center">
-                      {numberWithCommas(row.valuation)}
-                      <span className={classes.usd}>USD</span>
-                    </TableCell>
-                    <TableCell align="right">{row.assetType}</TableCell>
                   </TableRow>
                 );
               }

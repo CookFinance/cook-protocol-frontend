@@ -1,3 +1,4 @@
+import { UniswapModal } from "components";
 import { useConnectedWeb3Context } from "contexts/connectedWeb3";
 import React, { useEffect, useState } from "react";
 import { ICoinPrices, ICreateFund, IGlobalData, Maybe } from "types";
@@ -19,6 +20,7 @@ export const defaultCoinPrices: ICoinPrices = {
     dai: ZERO_NUMBER,
     xlm: ZERO_NUMBER,
     zrx: ZERO_NUMBER,
+    usdt: ZERO_NUMBER,
   },
   prev: {
     eth: ZERO_NUMBER,
@@ -34,18 +36,22 @@ export const defaultCoinPrices: ICoinPrices = {
     dai: ZERO_NUMBER,
     xlm: ZERO_NUMBER,
     zrx: ZERO_NUMBER,
+    usdt: ZERO_NUMBER,
   },
 };
 
 const GlobalContext = React.createContext<
   IGlobalData & {
     addFund: (_: ICreateFund) => void;
+    setUniswapModalVisible: (_: boolean) => void;
   }
 >({
   createdPools: [],
   tokenPrices: defaultCoinPrices,
   addFund: (_: ICreateFund) => {},
   ethBalance: ZERO_NUMBER,
+  uniswapModalVisible: false,
+  setUniswapModalVisible: (_: boolean) => {},
 });
 
 export const useGlobal = () => {
@@ -63,6 +69,7 @@ export const GlobalProvider: React.FC = (props) => {
     createdPools: [],
     tokenPrices: defaultCoinPrices,
     ethBalance: ZERO_NUMBER,
+    uniswapModalVisible: false,
   });
   const { account, library: provider } = useConnectedWeb3Context();
 
@@ -70,6 +77,13 @@ export const GlobalProvider: React.FC = (props) => {
     setState((prev) => ({
       ...prev,
       createdPools: [...prev.createdPools, payload],
+    }));
+  };
+
+  const setUniswapModalVisible = (uniswapModalVisible: boolean) => {
+    setState((prev) => ({
+      ...prev,
+      uniswapModalVisible,
     }));
   };
 
@@ -102,8 +116,16 @@ export const GlobalProvider: React.FC = (props) => {
   }, [provider]);
 
   return (
-    <GlobalContext.Provider value={{ ...state, addFund }}>
+    <GlobalContext.Provider
+      value={{ ...state, addFund, setUniswapModalVisible }}
+    >
       {props.children}
+      {state.uniswapModalVisible && (
+        <UniswapModal
+          onClose={() => setUniswapModalVisible(false)}
+          visible={state.uniswapModalVisible}
+        />
+      )}
     </GlobalContext.Provider>
   );
 };

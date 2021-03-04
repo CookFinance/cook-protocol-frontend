@@ -16,6 +16,8 @@ declare module "@material-ui/core/styles/createMuiTheme" {
       fourth: string;
       gray10: string;
       gray20: string;
+      gray30: string;
+      gray40: string;
       warn: string;
       success: string;
     };
@@ -36,6 +38,8 @@ declare module "@material-ui/core/styles/createMuiTheme" {
       fourth: string;
       gray10: string;
       gray20: string;
+      gray30: string;
+      gray40: string;
       warn: string;
       success: string;
     };

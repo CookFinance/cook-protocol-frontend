@@ -1,0 +1,135 @@
+import { InputAdornment, TextField, makeStyles } from "@material-ui/core";
+import { ReactComponent as DownIcon } from "assets/svgs/down.svg";
+import clsx from "clsx";
+import { TOKEN_DECIMALS } from "config/constants";
+import { getToken } from "config/network";
+import { BigNumber, ethers } from "ethers";
+import React, { useEffect, useState } from "react";
+import { KnownToken } from "types";
+import { ZERO_NUMBER } from "utils/number";
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    borderColor: theme.colors.gray20,
+    fontSize: 24,
+    lineHeight: "36px",
+    height: 68,
+  },
+  prefix: {
+    display: "flex",
+    alignItems: "center",
+    "& > * + *": {
+      marginLeft: 16,
+    },
+  },
+  max: {
+    backgroundColor: theme.colors.gray30,
+    padding: 8,
+    borderRadius: 53,
+    height: 24,
+    width: 42,
+    color: theme.colors.gray40,
+    fontSize: 12,
+    lineHeight: "10px",
+    cursor: "pointer",
+    transition: "all 0.4s",
+    "&:hover": {
+      opacity: 0.7,
+    },
+  },
+  symbol: {
+    display: "flex",
+    alignItems: "center",
+    "& span": {
+      textTransform: "uppercase",
+      fontSize: 24,
+      lineHeight: "36px",
+      color: theme.colors.primary,
+    },
+    "& > * + *": {
+      marginLeft: 8,
+    },
+    cursor: "pointer",
+    transition: "all 0.4s",
+    "&:hover": {
+      opacity: 0.7,
+    },
+  },
+}));
+
+interface IProps {
+  className?: string;
+  token: KnownToken;
+  amount: BigNumber;
+  maxVisible?: boolean;
+  maxValue?: BigNumber;
+  onMax: () => void;
+  onChangeToken: () => void;
+  onChangeValue: (_: BigNumber) => void;
+}
+
+export const TokenInput = (props: IProps) => {
+  const {
+    amount,
+    maxValue = ZERO_NUMBER,
+    maxVisible = false,
+    onChangeToken,
+    onChangeValue,
+    onMax,
+    token,
+  } = props;
+  const classes = useStyles();
+  const [currentValue, setCurrentValue] = useState("");
+  const tokenInfo = getToken(token);
+
+  useEffect(() => {
+    if (!amount.eq(ZERO_NUMBER)) {
+      setCurrentValue(() => "");
+    } else if (
+      !ethers.utils.parseUnits(currentValue || "0", TOKEN_DECIMALS).eq(amount)
+    ) {
+      setCurrentValue(() => ethers.utils.formatUnits(amount, TOKEN_DECIMALS));
+    }
+    // eslint-disable-next-line
+  }, [amount, currentValue]);
+
+  const onChangeAmount = (
+    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => {
+    const { value: inputValue } = e.target;
+    if (!inputValue) {
+      onChangeValue(ZERO_NUMBER);
+    } else {
+      const newValue = ethers.utils.parseUnits(inputValue, TOKEN_DECIMALS);
+      onChangeValue(newValue);
+    }
+    setCurrentValue(() => inputValue);
+  };
+
+  const TokenIcon = tokenInfo.icon;
+
+  return (
+    <TextField
+      InputProps={{
+        endAdornment: (
+          <InputAdornment position="end">
+            <div className={classes.prefix}>
+              {maxVisible && <div className={classes.max}>MAX</div>}
+              <div className={classes.symbol}>
+                <TokenIcon />
+                <span>{tokenInfo.symbol}</span>
+                <DownIcon />
+              </div>
+            </div>
+          </InputAdornment>
+        ),
+      }}
+      className={clsx(classes.root, props.className)}
+      fullWidth
+      onChange={onChangeAmount}
+      placeholder="0.00"
+      value={currentValue}
+      variant="outlined"
+    />
+  );
+};

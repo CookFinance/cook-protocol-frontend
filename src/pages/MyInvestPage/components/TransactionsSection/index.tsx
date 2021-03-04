@@ -1,10 +1,12 @@
 import { makeStyles } from "@material-ui/core";
-import { SortableFundsTable } from "components";
+import { SortableFundsTable, SortableTransactionsTable } from "components";
 import { TOKEN_DECIMALS } from "config/constants";
 import { useGlobal } from "contexts";
 import { BigNumber } from "ethers";
-import React, { useState } from "react";
-import { IPoolDetails } from "types";
+import moment from "moment";
+import React from "react";
+import { ITransactionItem } from "types";
+import { formatBigNumber } from "utils";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -14,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface IProps {
-  pools: IPoolDetails[];
+  transactions: ITransactionItem[];
 }
 
 export const TransactionsSection = (props: IProps) => {
@@ -24,7 +26,17 @@ export const TransactionsSection = (props: IProps) => {
     <div className={classes.root}>
       <div className={classes.content}>
         <div>
-          <SortableFundsTable rows={props.pools} />
+          <SortableTransactionsTable
+            rows={props.transactions.map((e) => {
+              const m = moment(e.timestamp * 1000);
+              return {
+                ...e,
+                amount: Number(formatBigNumber(e.value.amount, TOKEN_DECIMALS)),
+                date: m.format("MM/DD/YYYY"),
+                time: m.format("hh:mm"),
+              };
+            })}
+          />
         </div>
       </div>
     </div>

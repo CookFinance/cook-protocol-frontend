@@ -88,7 +88,7 @@ export const AccountInfoBar = () => {
     rawWeb3Context,
     setWalletConnectModalOpened,
   } = useConnectedWeb3Context();
-  const { ethBalance } = useGlobal();
+  const { ethBalance, setUniswapModalVisible } = useGlobal();
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
@@ -104,6 +104,10 @@ export const AccountInfoBar = () => {
 
   const onConnect = () => {
     setWalletConnectModalOpened(true);
+  };
+
+  const onUniswap = () => {
+    setUniswapModalVisible(true);
   };
 
   const onDisconnect = () => {
@@ -170,6 +174,7 @@ export const AccountInfoBar = () => {
           <Button
             className={classes.swapButton}
             color="secondary"
+            onClick={onUniswap}
             variant="outlined"
           >
             <Typography>Swap with Uniswap</Typography>

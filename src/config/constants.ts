@@ -7,6 +7,7 @@ import { ReactComponent as LinkSvg } from "assets/svgs/token/link.svg";
 import { ReactComponent as LtcSvg } from "assets/svgs/token/ltc.svg";
 import { ReactComponent as RepSvg } from "assets/svgs/token/rep.svg";
 import { ReactComponent as UniSvg } from "assets/svgs/token/uni.svg";
+import { ReactComponent as UsdtSvg } from "assets/svgs/token/usdt.svg";
 import { ReactComponent as XlmSvg } from "assets/svgs/token/xlm.svg";
 import { ReactComponent as XrpSvg } from "assets/svgs/token/xrp.svg";
 import { ReactComponent as YfiSvg } from "assets/svgs/token/yfi.svg";
@@ -49,6 +50,7 @@ export const TOKEN_ICONS: { [key in KnownToken]: React.ElementType } = {
   dai: DaiSvg,
   xrp: XrpSvg,
   zrx: ZrxSvg,
+  usdt: UsdtSvg,
 };
 
 export const PlATFORMS = [

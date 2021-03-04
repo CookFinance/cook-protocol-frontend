@@ -3,10 +3,11 @@ import clsx from "clsx";
 import { TOKEN_DECIMALS } from "config/constants";
 import { useGlobal } from "contexts";
 import { BigNumber } from "ethers";
+import { parseEther } from "ethers/lib/utils";
 import React from "react";
 import useCommonStyles from "styles/common";
-import { IPool, IPoolDetails } from "types";
-import { AssetType } from "types/enums";
+import { IPool, IPoolDetails, ITransactionItem } from "types";
+import { AssetType, ETransactionItemType } from "types/enums";
 import { formatBigNumber } from "utils";
 import { ZERO_NUMBER } from "utils/number";
 import { calculateValuation } from "utils/token";
@@ -97,6 +98,81 @@ const mockPools: IPool[] = [
   },
 ];
 
+const mockTransactions: ITransactionItem[] = [
+  {
+    txId: "234",
+    type: ETransactionItemType.Buy,
+    value: {
+      token: "bal",
+      amount: parseEther("10"),
+    },
+    timestamp: 1614765512,
+  },
+  {
+    txId: "hhhhh",
+    type: ETransactionItemType.Buy,
+    value: {
+      token: "bal",
+      amount: parseEther("10"),
+    },
+    timestamp: 1614765512,
+  },
+  {
+    txId: "het",
+    type: ETransactionItemType.Sell,
+    value: {
+      token: "ltc",
+      amount: parseEther("10"),
+    },
+    timestamp: 1614765512,
+  },
+  {
+    txId: "vxvxv",
+    type: ETransactionItemType.Buy,
+    value: {
+      token: "bal",
+      amount: parseEther("10"),
+    },
+    timestamp: 1614765512,
+  },
+  {
+    txId: "vv24",
+    type: ETransactionItemType.Sell,
+    value: {
+      token: "zrx",
+      amount: parseEther("10"),
+    },
+    timestamp: 1614765512,
+  },
+  {
+    txId: "vxqw",
+    type: ETransactionItemType.Buy,
+    value: {
+      token: "bal",
+      amount: parseEther("10"),
+    },
+    timestamp: 1614765512,
+  },
+  {
+    txId: "fwfwf",
+    type: ETransactionItemType.Sell,
+    value: {
+      token: "dot",
+      amount: parseEther("20"),
+    },
+    timestamp: 1614765512,
+  },
+  {
+    txId: "q23424",
+    type: ETransactionItemType.Buy,
+    value: {
+      token: "eth",
+      amount: parseEther("100"),
+    },
+    timestamp: 1614765512,
+  },
+];
+
 const MyInvestPage = () => {
   const classes = useStyles();
   const { tokenPrices } = useGlobal();
@@ -131,7 +207,7 @@ const MyInvestPage = () => {
       <Typography className={classes.subTitle}>My invest</Typography>
       <FeaturedLiquidityPoolsSection pools={poolDetailsRows.slice(0, 3)} />
       <Typography className={classes.subTitle}>My transactions</Typography>
-      <TransactionsSection pools={poolDetailsRows} />
+      <TransactionsSection transactions={mockTransactions} />
     </div>
   );
 };

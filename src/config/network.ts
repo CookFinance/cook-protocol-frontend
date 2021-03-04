@@ -27,6 +27,7 @@ export const tokenIds = {
   rep: "rep",
   dai: "dai",
   xlm: "xlm",
+  usdt: "usdt",
 };
 
 const networks: { [K in NetworkId]: INetwork } = {
@@ -109,6 +110,11 @@ const knownTokens: { [K in KnownToken]: IKnownTokenData } = {
     name: "0x",
     symbol: "zrx",
     coingeckoId: "0x",
+  },
+  usdt: {
+    name: "Tether",
+    symbol: "usdt",
+    coingeckoId: "tether",
   },
 };
 

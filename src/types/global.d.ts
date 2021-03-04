@@ -73,7 +73,8 @@ export type KnownToken =
   | "rep"
   | "dai"
   | "xlm"
-  | "zrx";
+  | "zrx"
+  | "usdt";
 
 export interface IKnownTokenData {
   name: string;
@@ -102,6 +103,7 @@ export interface IGlobalData {
   createdPools: ICreateFund[];
   tokenPrices: ICoinPrices;
   ethBalance: BigNumber;
+  uniswapModalVisible: boolean;
 }
 
 export interface ITransactionItem {
