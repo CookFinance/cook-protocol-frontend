@@ -1,10 +1,12 @@
-import { Typography, makeStyles } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 import clsx from "clsx";
+import { SectionHeader } from "components";
+import { transparentize } from "polished";
 import React from "react";
-import useCommonStyles from "styles/common";
 
 import {
   AboutSection,
+  HeaderSection,
   InvestmentHistorySection,
   MainSection,
   TokenDistributionSection,
@@ -13,32 +15,44 @@ import {
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    padding: "51px 0",
+    display: "flex",
+    width: "100%",
+    [theme.breakpoints.down("md")]: {
+      flexDirection: "column",
+    },
   },
-  title: {
-    fontSize: 24,
-    lineHeight: "31px",
-    color: theme.colors.success,
+  left: {
+    padding: 24,
+    width: "63%",
+    [theme.breakpoints.down("md")]: { width: "100%" },
   },
-  content: {},
+  right: {
+    padding: 24,
+    flex: 1,
+    backgroundColor: transparentize(0.1, theme.colors.default),
+    [theme.breakpoints.down("md")]: { width: "100%", flex: "unset" },
+  },
   section: {
-    marginBottom: 100,
+    marginBottom: 24,
   },
 }));
 
 const FundDetailsPage = () => {
   const classes = useStyles();
-  const commonClasses = useCommonStyles();
 
   return (
-    <div className={clsx(classes.root, commonClasses.limitedContent)}>
-      <Typography className={classes.title}>COOK 100</Typography>
-      <div className={classes.content}>
+    <div className={clsx(classes.root)}>
+      <div className={classes.left}>
+        <HeaderSection />
         <MainSection className={classes.section} />
-        <AboutSection className={classes.section} />
         <TokenDistributionSection className={classes.section} />
-        <WhitelistSection className={classes.section} />
         <InvestmentHistorySection className={classes.section} />
+      </div>
+      <div className={classes.right}>
+        <SectionHeader title="About" />
+        <AboutSection className={classes.section} />
+        <SectionHeader title="Whitelist" />
+        {/* <WhitelistSection className={classes.section} /> */}
       </div>
     </div>
   );

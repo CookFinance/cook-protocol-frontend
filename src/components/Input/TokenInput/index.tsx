@@ -40,6 +40,12 @@ const useStyles = makeStyles((theme) => ({
   symbol: {
     display: "flex",
     alignItems: "center",
+    "& svg": {
+      "&:first-child": {
+        width: 24,
+        height: 24,
+      },
+    },
     "& span": {
       textTransform: "uppercase",
       fontSize: 24,
@@ -83,7 +89,7 @@ export const TokenInput = (props: IProps) => {
   const tokenInfo = getToken(token);
 
   useEffect(() => {
-    if (!amount.eq(ZERO_NUMBER)) {
+    if (amount.eq(ZERO_NUMBER)) {
       setCurrentValue(() => "");
     } else if (
       !ethers.utils.parseUnits(currentValue || "0", TOKEN_DECIMALS).eq(amount)
@@ -114,8 +120,12 @@ export const TokenInput = (props: IProps) => {
         endAdornment: (
           <InputAdornment position="end">
             <div className={classes.prefix}>
-              {maxVisible && <div className={classes.max}>MAX</div>}
-              <div className={classes.symbol}>
+              {maxVisible && (
+                <div className={classes.max} onClick={onMax}>
+                  MAX
+                </div>
+              )}
+              <div className={classes.symbol} onClick={onChangeToken}>
                 <TokenIcon />
                 <span>{tokenInfo.symbol}</span>
                 <DownIcon />
@@ -128,6 +138,7 @@ export const TokenInput = (props: IProps) => {
       fullWidth
       onChange={onChangeAmount}
       placeholder="0.00"
+      type="number"
       value={currentValue}
       variant="outlined"
     />

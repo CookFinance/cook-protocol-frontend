@@ -115,3 +115,5 @@ export interface ITransactionItem {
   };
   timestamp: number;
 }
+
+export type SortOrder = "asc" | "desc";

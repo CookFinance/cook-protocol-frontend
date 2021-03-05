@@ -12,7 +12,7 @@ import { ReactComponent as ArrowRightIcon } from "assets/svgs/arrow_right.svg";
 import { BigNumber } from "ethers";
 import { transparentize } from "polished";
 import React from "react";
-import { ITransactionItem } from "types";
+import { ITransactionItem, SortOrder } from "types";
 import { ETransactionItemType } from "types/enums";
 
 const Icons = {
@@ -39,10 +39,8 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   return 0;
 }
 
-type Order = "asc" | "desc";
-
 function getComparator<Key extends keyof any>(
-  order: Order,
+  order: SortOrder,
   orderBy: Key
 ): (
   a: { [key in Key]: number | string | BigNumber | any },
@@ -85,7 +83,7 @@ interface EnhancedTableProps {
     event: React.MouseEvent<unknown>,
     property: keyof Data
   ) => void;
-  order: Order;
+  order: SortOrder;
   orderBy: string;
 }
 
@@ -215,7 +213,7 @@ interface IProps {
 
 export const SortableTransactionsTable = (props: IProps) => {
   const classes = useStyles();
-  const [order, setOrder] = React.useState<Order>("asc");
+  const [order, setOrder] = React.useState<SortOrder>("asc");
   const { rows } = props;
   const [orderBy, setOrderBy] = React.useState<keyof Data>("timestamp");
 

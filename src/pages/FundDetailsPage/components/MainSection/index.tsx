@@ -5,13 +5,9 @@ import { transparentize } from "polished";
 import React from "react";
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    display: "flex",
-  },
-  left: { flex: 1 },
-  right: {
-    marginLeft: 50,
-  },
+  root: {},
+  left: {},
+  right: {},
   leftBottom: {
     display: "flex",
     marginTop: 50,

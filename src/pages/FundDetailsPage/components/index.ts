@@ -3,3 +3,4 @@ export * from "./WhitelistSection";
 export * from "./InvestmentHistorySection";
 export * from "./AboutSection";
 export * from "./MainSection";
+export * from "./HeaderSection";

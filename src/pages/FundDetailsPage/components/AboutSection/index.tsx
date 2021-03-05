@@ -8,15 +8,12 @@ import { numberWithCommas } from "utils";
 const useStyles = makeStyles((theme) => ({
   root: {},
   content: {
-    marginTop: 20,
-    padding: "50px 60px",
-    backgroundColor: theme.colors.primary,
-    borderRadius: 10,
+    marginTop: 8,
   },
   description: {
-    fontSize: 24,
-    lineHeight: "32px",
-    color: theme.colors.default,
+    fontSize: 16,
+    lineHeight: "24px",
+    color: theme.colors.third,
   },
   top: {
     marginTop: 38,
@@ -25,41 +22,18 @@ const useStyles = makeStyles((theme) => ({
       marginTop: 16,
     },
   },
-  bottom: {
-    marginTop: 16,
-    display: "flex",
-    alignItems: "center",
-  },
-  bottomItem: {
-    paddingRight: 80,
-    paddingLeft: 80,
-    borderRight: `1px solid ${transparentize(0.6, theme.colors.default)}`,
-    "&:last-child": { paddingRight: 0, borderRight: "none" },
-    "&:first-child": { paddingLeft: 0 },
-    "& > * + *": {
-      marginTop: 16,
-    },
-  },
   item: {
     display: "flex",
     alignItems: "center",
+    fontSize: 14,
+    lineHeight: 1.5,
+    color: theme.colors.secondary,
     "& span": {
-      "&:first-child": {
-        fontSize: 24,
-        lineHeight: "32px",
-        color: transparentize(0.5, theme.colors.default),
-        width: 300,
-      },
+      "&:first-child": { width: "40%" },
       "&:last-child": {
-        color: theme.colors.default,
-        fontSize: 30,
-        lineHeight: "40px",
-      },
-    },
-    "&.bold": {
-      "& span": {
-        "&:last-child": {
-          fontWeight: "bold",
+        color: theme.colors.primary,
+        "& span": {
+          color: theme.colors.third,
         },
       },
     },
@@ -74,46 +48,45 @@ export const AboutSection = (props: IProps) => {
   const classes = useStyles();
   return (
     <div className={clsx(classes.root, props.className)}>
-      <SectionHeader title="About" />
       <div className={classes.content}>
         <Typography className={classes.description}>
-          Liquidity Pool managed by Cook Protocol. It is an index of the top 100
-          tokens to seek for high returns consistently.
+          Fund managed by Cook Protocol. It is an index of the top 100 tokens to
+          seek for high returns consistently.
         </Typography>
         <div className={classes.top}>
           <div className={classes.item}>
             <span>Fees:</span>
-            <span>0.5%</span>
+            <span>2</span>
           </div>
           <div className={classes.item}>
-            <span>Accepted Tokens:</span>
-            <span>ETH, DAI</span>
+            <span>Total value:</span>
+            <span>
+              626, 676 <span>USD</span>
+            </span>
           </div>
-        </div>
-        <div className={clsx(classes.item, "bold")}>
-          <span>Total Value:</span>
-          <span>${numberWithCommas("2600000")}</span>
-        </div>
-        <div className={classes.bottom}>
-          <div className={classes.bottomItem}>
-            <div className={clsx(classes.item, "bold")}>
-              <span>Price:</span>
-              <span>${numberWithCommas("625")}</span>
-            </div>
-            <div className={clsx(classes.item, "bold")}>
-              <span>Highest Price(52 weeks):</span>
-              <span>${numberWithCommas("635")}</span>
-            </div>
+          <div className={classes.item}>
+            <span>Price::</span>
+            <span>
+              10,000,000 <span>USD</span>
+            </span>
           </div>
-          <div className={classes.bottomItem}>
-            <div className={clsx(classes.item, "bold")}>
-              <span>Trade Volume(24h):</span>
-              <span>${numberWithCommas("500000")}</span>
-            </div>
-            <div className={clsx(classes.item, "bold")}>
-              <span>Lowest Price(52 weeks):</span>
-              <span>${numberWithCommas("495")}</span>
-            </div>
+          <div className={classes.item}>
+            <span>Trade volume:</span>
+            <span>
+              200.76 <span>USD</span>
+            </span>
+          </div>
+          <div className={classes.item}>
+            <span>Highest price (52 weeks):</span>
+            <span>
+              26 <span>USD</span>
+            </span>
+          </div>
+          <div className={classes.item}>
+            <span>Lowest price (52 weeks):</span>
+            <span>
+              5 <span>USD</span>
+            </span>
           </div>
         </div>
       </div>

@@ -10,3 +10,4 @@ export * from "./Navbar";
 export * from "./Table";
 export * from "./Chart";
 export * from "./Input";
+export * from "./List";

@@ -52,7 +52,7 @@ export const InvestmentHistorySection = (props: IProps) => {
   const classes = useStyles();
   return (
     <div className={clsx(classes.root, props.className)}>
-      <SectionHeader showMore title="Whitelist" />
+      <SectionHeader title="Whitelist" />
       <div className={classes.content}>
         {mockInvestments.map((item) => (
           <div className={classes.item} key={item.date}>

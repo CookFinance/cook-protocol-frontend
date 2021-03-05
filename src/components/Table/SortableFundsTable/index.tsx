@@ -11,7 +11,7 @@ import { getToken } from "config/network";
 import { BigNumber } from "ethers";
 import { transparentize } from "polished";
 import React from "react";
-import { IPool, KnownToken } from "types";
+import { IPool, KnownToken, SortOrder } from "types";
 import { numberWithCommas } from "utils";
 
 interface Data extends IPool {
@@ -33,10 +33,8 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   return 0;
 }
 
-type Order = "asc" | "desc";
-
 function getComparator<Key extends keyof any>(
-  order: Order,
+  order: SortOrder,
   orderBy: Key
 ): (
   a: { [key in Key]: number | string | BigNumber | any },
@@ -83,7 +81,7 @@ interface EnhancedTableProps {
     event: React.MouseEvent<unknown>,
     property: keyof Data
   ) => void;
-  order: Order;
+  order: SortOrder;
   orderBy: string;
 }
 
@@ -228,7 +226,7 @@ interface IProps {
 
 export const SortableFundsTable = (props: IProps) => {
   const classes = useStyles();
-  const [order, setOrder] = React.useState<Order>("asc");
+  const [order, setOrder] = React.useState<SortOrder>("asc");
   const { rows } = props;
   const [orderBy, setOrderBy] = React.useState<keyof Data>("name");
 
