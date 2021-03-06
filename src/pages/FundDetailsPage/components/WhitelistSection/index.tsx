@@ -1,43 +1,66 @@
 import { Typography, makeStyles } from "@material-ui/core";
 import clsx from "clsx";
 import { SectionHeader } from "components";
+import { getToken } from "config/network";
 import { transparentize } from "polished";
 import React from "react";
+import { IPool, KnownToken } from "types";
 
 const useStyles = makeStyles((theme) => ({
   root: {},
   content: {
-    marginTop: 20,
-    borderRadius: 10,
-    backgroundColor: theme.colors.primary,
-    padding: "22px 60px",
+    marginTop: 12,
+    display: "flex",
   },
-  item: {
-    padding: "28px 0",
-    color: transparentize(0.5, theme.colors.default),
-    fontSize: 24,
-    lineHeight: "32px",
-    "&:not(:first-child)": {
-      borderTop: `1px solid ${transparentize(0.6, theme.colors.default)}`,
+  sectionContent: { flex: 1 },
+  sectionTitle: {
+    fontSize: 14,
+    lineHeight: "21px",
+    color: theme.colors.secondary,
+  },
+  tokenRow: {
+    display: "flex",
+    alignItems: "center",
+    fontSize: 14,
+    lineHeight: "21px",
+    color: theme.colors.primary,
+    margin: "8px 0",
+    "& svg": {
+      width: 24,
+      height: 24,
+      marginRight: 8,
     },
   },
 }));
 
 interface IProps {
   className?: string;
+  data: IPool;
 }
 
 export const WhitelistSection = (props: IProps) => {
   const classes = useStyles();
+  const { data } = props;
+
   return (
     <div className={clsx(classes.root, props.className)}>
-      <SectionHeader title="Whitelist" />
       <div className={classes.content}>
-        {["Compound", "Uniswap"].map((item) => (
-          <div className={classes.item} key={item}>
-            {item}
-          </div>
-        ))}
+        <div className={classes.sectionContent}>
+          <Typography className={classes.sectionTitle}>Tokens:</Typography>
+          {Object.keys(data.tokens).map((token) => {
+            const tokenInfo = getToken(token as KnownToken);
+            const Icon = tokenInfo.icon;
+            return (
+              <div className={classes.tokenRow} key={token}>
+                <Icon />
+                <span>{token.toUpperCase()}</span>
+              </div>
+            );
+          })}
+        </div>
+        <div className={classes.sectionContent}>
+          <Typography className={classes.sectionTitle}>Yields:</Typography>
+        </div>
       </div>
     </div>
   );

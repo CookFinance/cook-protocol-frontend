@@ -171,6 +171,33 @@ const mockTransactions: ITransactionItem[] = [
     },
     timestamp: 1614765512,
   },
+  {
+    txId: "vvvv",
+    type: ETransactionItemType.Buy,
+    value: {
+      token: "bal",
+      amount: parseEther("10"),
+    },
+    timestamp: 1614765512,
+  },
+  {
+    txId: "vxvxvxv",
+    type: ETransactionItemType.Sell,
+    value: {
+      token: "usdt",
+      amount: parseEther("20"),
+    },
+    timestamp: 1614765512,
+  },
+  {
+    txId: "hh4h4h",
+    type: ETransactionItemType.Buy,
+    value: {
+      token: "eth",
+      amount: parseEther("100"),
+    },
+    timestamp: 1614765512,
+  },
 ];
 
 const MyInvestPage = () => {

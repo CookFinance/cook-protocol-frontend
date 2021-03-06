@@ -11,13 +11,13 @@ const useStyles = makeStyles((theme) => ({
     marginTop: 8,
   },
   description: {
-    fontSize: 16,
-    lineHeight: "24px",
-    color: theme.colors.third,
+    fontSize: 14,
+    lineHeight: "19px",
+    color: theme.colors.secondary,
   },
   top: {
-    marginTop: 38,
-    marginBottom: 45,
+    marginTop: 24,
+    marginBottom: 24,
     "& > * + *": {
       marginTop: 16,
     },
@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
     lineHeight: 1.5,
     color: theme.colors.secondary,
     "& span": {
-      "&:first-child": { width: "40%" },
+      "&:first-child": { width: "60%" },
       "&:last-child": {
         color: theme.colors.primary,
         "& span": {

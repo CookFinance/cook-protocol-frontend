@@ -17,6 +17,7 @@ const colors = [
       gray40: "#757575",
       warn: "#E04848",
       success: "#60E160",
+      neutral900: "#393550",
     },
   },
   {
@@ -35,6 +36,7 @@ const colors = [
       gray40: "#757575",
       warn: "#E04848",
       success: "#60E160",
+      neutral900: "#393550",
     },
   },
 ];
