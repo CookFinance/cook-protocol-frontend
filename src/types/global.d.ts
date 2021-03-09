@@ -52,12 +52,18 @@ export interface IPoolDetails extends IPool {
   valuation: number;
 }
 
-export interface ITokenDistribution {
-  tokenName: string;
-  quantity: number;
-  value: number;
-  portfolio: number;
-  returns24h: number;
+export interface ITokenDistributionItem {
+  tokenId: KnownToken;
+  quantity: BigNumber;
+  value: BigNumber;
+  portfolioAllocation: Number;
+  returns24h: BigNumber;
+}
+
+export interface ITokenDistributionTableItem extends ITokenDistributionItem {
+  valueStr: string;
+  returns24hStr: string;
+  quantityStr: string;
 }
 
 export type KnownToken =

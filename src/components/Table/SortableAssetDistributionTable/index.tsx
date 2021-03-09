@@ -1,35 +1,19 @@
-import {
-  IconButton,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TableSortLabel,
-} from "@material-ui/core";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableContainer from "@material-ui/core/TableContainer";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import TableSortLabel from "@material-ui/core/TableSortLabel";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
-import KeyboardArrowLeftIcon from "@material-ui/icons/KeyboardArrowLeft";
-import KeyboardArrowRightIcon from "@material-ui/icons/KeyboardArrowRight";
-import { ReactComponent as ArrowDownIcon } from "assets/svgs/arrow_down.svg";
-import { ReactComponent as ArrowRightIcon } from "assets/svgs/arrow_right.svg";
+import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
+import { getToken } from "config/network";
 import { BigNumber } from "ethers";
 import { transparentize } from "polished";
 import React from "react";
-import { ITransactionItem, SortOrder } from "types";
-import { ETransactionItemType } from "types/enums";
-
-const Icons = {
-  [ETransactionItemType.Buy]: ArrowDownIcon,
-  [ETransactionItemType.Sell]: ArrowRightIcon,
-};
-
-interface Data extends ITransactionItem {
-  amount: number;
-  date: string;
-  time: string;
-}
+import { ITokenDistributionTableItem, SortOrder } from "types";
+import { ZERO_NUMBER } from "utils/number";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (!["number", "string"].includes(typeof a[orderBy])) {
@@ -67,35 +51,36 @@ function stableSort<T>(array: T[], comparator: (a: T, b: T) => number) {
 }
 
 interface HeadCell {
-  id: keyof Data;
+  id: keyof ITokenDistributionTableItem;
   label: string;
   numeric: boolean;
 }
 
 const headCells: HeadCell[] = [
   {
-    id: "type",
+    id: "tokenId",
     numeric: false,
-    label: "Type",
+    label: "Asset",
   },
-  { id: "amount", numeric: false, label: "Value" },
-  { id: "timestamp", numeric: false, label: "Date" },
+  { id: "quantityStr", numeric: false, label: "Quantity" },
+  { id: "valueStr", numeric: false, label: "Value" },
+  { id: "portfolioAllocation", numeric: true, label: "Portfolio allocation" },
+  { id: "returns24h", numeric: true, label: "Return (24h)" },
 ];
 
 interface EnhancedTableProps {
   classes: ReturnType<typeof useStyles>;
   onRequestSort: (
     event: React.MouseEvent<unknown>,
-    property: keyof Data
+    property: keyof ITokenDistributionTableItem
   ) => void;
   order: SortOrder;
   orderBy: string;
-  alignLastRight: boolean;
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
   const { classes, onRequestSort, order, orderBy } = props;
-  const createSortHandler = (property: keyof Data) => (
+  const createSortHandler = (property: keyof ITokenDistributionTableItem) => (
     event: React.MouseEvent<unknown>
   ) => {
     onRequestSort(event, property);
@@ -106,11 +91,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
       <TableRow>
         {headCells.map((headCell, index) => (
           <TableCell
-            align={
-              props.alignLastRight && index === headCells.length - 1
-                ? "right"
-                : "left"
-            }
+            align={[0, 3].includes(index) ? "left" : "center"}
             key={headCell.id}
             sortDirection={orderBy === headCell.id ? order : false}
           >
@@ -129,6 +110,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             </TableSortLabel>
           </TableCell>
         ))}
+        <TableCell />
       </TableRow>
     </TableHead>
   );
@@ -151,7 +133,6 @@ const useStyles = makeStyles((theme: Theme) =>
             fontSize: 14,
             lineHeight: "21px",
             padding: "4px",
-            flexDirection: "row",
             "&:first-child": {
               padding: "4px 0",
             },
@@ -172,6 +153,13 @@ const useStyles = makeStyles((theme: Theme) =>
           backgroundColor: theme.colors.default,
           fontSize: 14,
           lineHeight: "21px",
+
+          "& span": {
+            borderRadius: 2,
+            display: "inline-flex",
+            alignItems: "center",
+            padding: "9px 16px",
+          },
           padding: "4px",
           "&:first-child": {
             padding: "4px 0",
@@ -205,69 +193,44 @@ const useStyles = makeStyles((theme: Theme) =>
       },
       marginRight: 3,
     },
-    value: {
-      color: theme.colors.primary,
-    },
-    unit: {
+    usd: {
       color: theme.colors.secondary,
     },
-    info: {
-      display: "flex",
-      alignItems: "center",
+    positive: {
+      color: theme.colors.success,
     },
-    paginationWrapper: {
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      "& > * + *": {
-        marginLeft: 4,
-      },
+    negative: {
+      color: theme.colors.warn,
     },
-    paginationText: {
-      fontSize: 12,
-      color: theme.colors.secondary,
-      lineHeight: "14.5px",
-      "& span": {
-        color: theme.colors.primary,
-      },
-    },
-    paginationIcon: {
-      color: theme.colors.primary,
+    progressWrapper: { display: "flex", alignItems: "center" },
+    progress: {
+      borderRadius: 6,
+      backgroundColor: theme.colors.primary,
+      height: 4,
     },
   })
 );
 
 interface IProps {
-  rows: Data[];
-  alignLastRight?: boolean;
+  rows: ITokenDistributionTableItem[];
 }
 
-export const SortableTransactionsTable = (props: IProps) => {
+export const SortableAssetDistributionTable = (props: IProps) => {
   const classes = useStyles();
   const [order, setOrder] = React.useState<SortOrder>("asc");
-  const { alignLastRight = false, rows } = props;
-  const [orderBy, setOrderBy] = React.useState<keyof Data>("timestamp");
-
-  const [page, setPage] = React.useState(0);
-  const rowsPerPage = 10;
-
-  const handleChangePage = (newPage: number) => {
-    setPage(newPage);
-  };
-
-  const emptyRows =
-    rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+  const { rows } = props;
+  const [orderBy, setOrderBy] = React.useState<
+    keyof ITokenDistributionTableItem
+  >("tokenId");
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
-    property: keyof Data
+    property: keyof ITokenDistributionTableItem
   ) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
-
-  const totalPage = Math.ceil(rows.length / rowsPerPage);
 
   return (
     <div className={classes.root}>
@@ -278,71 +241,65 @@ export const SortableTransactionsTable = (props: IProps) => {
           className={classes.table}
         >
           <EnhancedTableHead
-            alignLastRight={alignLastRight}
             classes={classes}
             onRequestSort={handleRequestSort}
             order={order}
             orderBy={orderBy}
           />
           <TableBody>
-            {stableSort<Data>(rows, getComparator(order, orderBy))
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row, index) => {
-                const labelId = `enhanced-table-checkbox-${index}`;
-                const Icon = Icons[row.type];
-                return (
-                  <TableRow hover key={row.txId} tabIndex={-1}>
-                    <TableCell
-                      align="left"
-                      id={labelId}
-                      padding="none"
-                      scope="row"
-                    >
-                      <div className={classes.info}>
-                        <Icon />
-                        &nbsp;
-                        {row.type}
-                      </div>
-                    </TableCell>
-                    <TableCell align="left">
-                      <span className={classes.value}>{row.amount}</span>&nbsp;
-                      <span className={classes.unit}>
-                        {row.value.token.toUpperCase()}
-                      </span>
-                    </TableCell>
-                    <TableCell align={alignLastRight ? "right" : "left"}>
-                      <span className={classes.value}>{row.date}</span>&nbsp;
-                      <span className={classes.unit}>{row.time}</span>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            {emptyRows > 0 && (
-              <TableRow style={{ height: 49 * emptyRows - 20 }}>
-                <TableCell colSpan={3} />
-              </TableRow>
-            )}
+            {stableSort<ITokenDistributionTableItem>(
+              rows,
+              getComparator(order, orderBy)
+            ).map((row, index) => {
+              const labelId = `asset-distribution-table-checkbox-${index}`;
+              const tokenInfo = getToken(row.tokenId);
+              const Icon = tokenInfo.icon;
+
+              return (
+                <TableRow hover key={row.tokenId} tabIndex={-1}>
+                  <TableCell
+                    align="left"
+                    id={labelId}
+                    padding="none"
+                    scope="row"
+                  >
+                    <Icon />
+                    {row.tokenId.toUpperCase()}
+                  </TableCell>
+                  <TableCell align="center">{row.quantityStr}</TableCell>
+                  <TableCell align="center">
+                    {row.valueStr}
+                    <span className={classes.usd}>USD</span>
+                  </TableCell>
+                  <TableCell align="left" className={classes.progressWrapper}>
+                    <div
+                      className={classes.progress}
+                      style={{ width: `${row.portfolioAllocation}px` }}
+                    />
+                    &nbsp;&nbsp;
+                    {row.portfolioAllocation}%
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    className={
+                      row.returns24h.gte(ZERO_NUMBER)
+                        ? classes.positive
+                        : classes.negative
+                    }
+                  >
+                    {row.returns24h.gte(ZERO_NUMBER) ? "+" : ""}{" "}
+                    {row.returns24hStr}
+                  </TableCell>
+                  <TableCell align="center">
+                    <span>
+                      <DeleteOutlineIcon />
+                    </span>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
-        <div className={classes.paginationWrapper}>
-          <IconButton
-            className={classes.paginationIcon}
-            disabled={page === 0}
-            onClick={() => handleChangePage(page - 1)}
-          >
-            <KeyboardArrowLeftIcon />
-          </IconButton>
-          <span className={classes.paginationText}>
-            Page <span>{page + 1}</span> of {totalPage}
-          </span>
-          <IconButton
-            className={classes.paginationIcon}
-            disabled={page === totalPage - 1}
-            onClick={() => handleChangePage(page + 1)}
-          >
-            <KeyboardArrowRightIcon />
-          </IconButton>
-        </div>
       </TableContainer>
     </div>
   );

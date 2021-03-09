@@ -1,65 +1,147 @@
-import { Typography, makeStyles } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 import clsx from "clsx";
-import { SectionHeader } from "components";
-import { transparentize } from "polished";
+import { SortableTransactionsTable } from "components";
+import { TOKEN_DECIMALS } from "config/constants";
+import { parseEther } from "ethers/lib/utils";
+import moment from "moment";
 import React from "react";
+import { ITransactionItem } from "types";
+import { ETransactionItemType } from "types/enums";
+import { formatBigNumber } from "utils";
 
 const useStyles = makeStyles((theme) => ({
   root: {},
   content: {
-    marginTop: 20,
-    borderRadius: 10,
-    backgroundColor: theme.colors.primary,
-    padding: "22px 60px",
-  },
-  item: {
-    padding: "28px 0",
-    display: "flex",
-    justifyContent: "space-between",
-    "&:not(:first-child)": {
-      borderTop: `1px solid ${transparentize(0.6, theme.colors.default)}`,
+    width: "70%",
+    [theme.breakpoints.down(768)]: {
+      width: "100%",
     },
   },
-  itemDate: {
-    color: transparentize(0.5, theme.colors.default),
-    fontSize: 24,
-    lineHeight: "32px",
-  },
-  itemContent: {
-    minWidth: 350,
-    color: theme.colors.default,
-    fontSize: 24,
-    lineHeight: "32px",
-  },
 }));
+
+const mockTransactions: ITransactionItem[] = [
+  {
+    txId: "234",
+    type: ETransactionItemType.Buy,
+    value: {
+      token: "bal",
+      amount: parseEther("10"),
+    },
+    timestamp: 1614765512,
+  },
+  {
+    txId: "hhhhh",
+    type: ETransactionItemType.Buy,
+    value: {
+      token: "bal",
+      amount: parseEther("10"),
+    },
+    timestamp: 1614765512,
+  },
+  {
+    txId: "het",
+    type: ETransactionItemType.Sell,
+    value: {
+      token: "ltc",
+      amount: parseEther("10"),
+    },
+    timestamp: 1614765512,
+  },
+  {
+    txId: "vxvxv",
+    type: ETransactionItemType.Buy,
+    value: {
+      token: "bal",
+      amount: parseEther("10"),
+    },
+    timestamp: 1614765512,
+  },
+  {
+    txId: "vv24",
+    type: ETransactionItemType.Sell,
+    value: {
+      token: "zrx",
+      amount: parseEther("10"),
+    },
+    timestamp: 1614765512,
+  },
+  {
+    txId: "vxqw",
+    type: ETransactionItemType.Buy,
+    value: {
+      token: "bal",
+      amount: parseEther("10"),
+    },
+    timestamp: 1614765512,
+  },
+  {
+    txId: "fwfwf",
+    type: ETransactionItemType.Sell,
+    value: {
+      token: "dot",
+      amount: parseEther("20"),
+    },
+    timestamp: 1614765512,
+  },
+  {
+    txId: "q23424",
+    type: ETransactionItemType.Buy,
+    value: {
+      token: "eth",
+      amount: parseEther("100"),
+    },
+    timestamp: 1614765512,
+  },
+  {
+    txId: "vvvv",
+    type: ETransactionItemType.Buy,
+    value: {
+      token: "bal",
+      amount: parseEther("10"),
+    },
+    timestamp: 1614765512,
+  },
+  {
+    txId: "vxvxvxv",
+    type: ETransactionItemType.Sell,
+    value: {
+      token: "usdt",
+      amount: parseEther("20"),
+    },
+    timestamp: 1614765512,
+  },
+  {
+    txId: "hh4h4h",
+    type: ETransactionItemType.Buy,
+    value: {
+      token: "eth",
+      amount: parseEther("100"),
+    },
+    timestamp: 1614765512,
+  },
+];
 
 interface IProps {
   className?: string;
 }
 
-interface IInvestmentHistoryItem {
-  date: string;
-  content: string;
-}
-
-const mockInvestments: IInvestmentHistoryItem[] = [
-  { date: "2020 November 15", content: "Bought 10 ETH" },
-  { date: "2020 November 11", content: "Sold 1000 Chainlink" },
-  { date: "2020 November 08", content: "Bought 25 BTC" },
-];
-
 export const InvestmentHistorySection = (props: IProps) => {
   const classes = useStyles();
   return (
     <div className={clsx(classes.root, props.className)}>
-      <SectionHeader title="Whitelist" />
       <div className={classes.content}>
-        {mockInvestments.map((item) => (
-          <div className={classes.item} key={item.date}>
-            <div className={classes.itemDate}>{item.date}</div>
-            <div className={classes.itemContent}>{item.content}</div>
-          </div>
-        ))}
+        <SortableTransactionsTable
+          alignLastRight
+          rows={mockTransactions.map((e) => {
+            const m = moment(e.timestamp * 1000);
+            return {
+              ...e,
+              amount: Number(formatBigNumber(e.value.amount, TOKEN_DECIMALS)),
+              date: m.format("MM/DD/YYYY"),
+              time: m.format("hh:mm"),
+            };
+          })}
+        />
       </div>
     </div>
   );

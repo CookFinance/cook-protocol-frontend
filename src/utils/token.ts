@@ -80,7 +80,7 @@ export const getCoinChartInfo = async (
 };
 
 export const getCoinsPrices = async (): Promise<ICoinPrices> => {
-  const prices: ICoinPrices = defaultCoinPrices;
+  const prices: ICoinPrices = { ...defaultCoinPrices };
 
   const promises = Object.keys(tokenIds).map(async (tokenId) => {
     const token = getToken(tokenId as KnownToken);

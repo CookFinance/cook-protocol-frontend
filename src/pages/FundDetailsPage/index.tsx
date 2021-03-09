@@ -1,14 +1,16 @@
-import { makeStyles } from "@material-ui/core";
+import { Button, Typography, makeStyles } from "@material-ui/core";
+import { ReactComponent as PlusIcon } from "assets/svgs/plus.svg";
 import clsx from "clsx";
 import { SectionHeader } from "components";
 import { BigNumber } from "ethers";
 import { transparentize } from "polished";
-import React from "react";
+import React, { useState } from "react";
 import { IPool } from "types";
 import { AssetType } from "types/enums";
 
 import {
   AboutSection,
+  AddAssetModal,
   AverageCostSection,
   HeaderSection,
   InvestmentHistorySection,
@@ -42,6 +44,33 @@ const useStyles = makeStyles((theme) => ({
   section: {
     marginBottom: 24,
   },
+  swapWrapper: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    "& > div": {
+      "&:first-child": {
+        marginBottom: 0,
+      },
+    },
+    marginBottom: 8,
+  },
+  swapButton: {
+    height: 40,
+    fontSize: 16,
+    lineHeight: "28px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: theme.colors.primary,
+    color: theme.colors.default,
+    "& span": {
+      textTransform: "none",
+    },
+    "&:hover": {
+      color: theme.colors.secondary,
+    },
+  },
 }));
 
 const mockFundData: IPool = {
@@ -61,15 +90,42 @@ const mockFundData: IPool = {
   },
 };
 
+interface IState {
+  assetModalVisible: boolean;
+}
+
 const FundDetailsPage = () => {
   const classes = useStyles();
+  const [state, setState] = useState<IState>({ assetModalVisible: false });
+
+  const setAssetModalVisible = (assetModalVisible: boolean) =>
+    setState((prev) => ({ ...prev, assetModalVisible }));
+
+  const onNewAsset = () => {
+    setAssetModalVisible(true);
+  };
 
   return (
     <div className={clsx(classes.root)}>
       <div className={classes.left}>
         <HeaderSection />
         <MainSection className={classes.section} />
+        <div className={classes.swapWrapper}>
+          <SectionHeader title="Asset distribution" />
+          <Button
+            className={classes.swapButton}
+            color="secondary"
+            onClick={onNewAsset}
+            variant="outlined"
+          >
+            <PlusIcon />
+            &nbsp;&nbsp;
+            <Typography>Add new asset</Typography>
+          </Button>
+        </div>
+
         <TokenDistributionSection className={classes.section} />
+        <SectionHeader title="Investment History" />
         <InvestmentHistorySection className={classes.section} />
       </div>
       <div className={classes.right}>
@@ -82,6 +138,10 @@ const FundDetailsPage = () => {
         <SectionHeader title="Whitelist" />
         <WhitelistSection className={classes.section} data={mockFundData} />
       </div>
+      <AddAssetModal
+        onClose={() => setAssetModalVisible(false)}
+        visible={state.assetModalVisible}
+      />
     </div>
   );
 };

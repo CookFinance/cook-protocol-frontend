@@ -1,135 +1,188 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Typography,
-  makeStyles,
-} from "@material-ui/core";
-import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
-import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
+import { makeStyles } from "@material-ui/core";
 import clsx from "clsx";
-import { SectionHeader } from "components";
-import React from "react";
+import { SortableAssetDistributionTable } from "components";
+import { TOKEN_DECIMALS } from "config/constants";
+import { defaultCoinPrices, useGlobal } from "contexts";
+import { BigNumber } from "ethers";
+import { parseEther } from "ethers/lib/utils";
+import React, { useState } from "react";
 import useCommonStyles from "styles/common";
-import { ITokenDistribution } from "types";
-import { numberWithCommas } from "utils";
+import { IPool, ITokenDistributionTableItem, KnownToken } from "types";
+import { AssetType } from "types/enums";
+import { formatBigNumber } from "utils";
+import { ZERO_NUMBER } from "utils/number";
+import { calculateValuation } from "utils/token";
 
 const useStyles = makeStyles((theme) => ({
-  root: {},
-  title: {
-    color: theme.colors.default,
-    fontSize: 32,
-    lineHeight: "42px",
+  root: { marginTop: 20 },
+  header: {
+    marginTop: 20,
+    display: "flex",
+    alignItems: "center",
   },
-  content: { marginBottom: 20 },
-  table: {
-    "& table": {
-      "& td": {
-        textAlign: "center",
-      },
-      "& th": {
-        textAlign: "center",
-      },
+  headerItem: {
+    cursor: "pointer",
+    userSelect: "none",
+    fontSize: 14,
+    lineHeight: 1.5,
+    color: theme.colors.primary,
+    marginRight: 40,
+    transition: "all 0.5s",
+    padding: "3px 0",
+    borderBottom: `2px solid ${theme.colors.transparent}`,
+    "&:hover": {
+      opacity: 0.7,
+    },
+    "&.active": {
+      fontWeight: "bold",
+      borderBottom: `2px solid ${theme.colors.primary}`,
     },
   },
+  content: {},
 }));
 
-const mockTokenDistribution: ITokenDistribution[] = [
-  {
-    tokenName: "BTC",
-    quantity: 110,
-    value: 1664000,
-    portfolio: 64,
-    returns24h: 5,
-  },
-  {
-    tokenName: "ETH",
-    quantity: 700,
-    value: 312000,
-    portfolio: 12,
-    returns24h: 10,
-  },
-  {
-    tokenName: "XRP",
-    quantity: 312000,
-    value: 7800,
-    portfolio: 3,
-    returns24h: 15,
-  },
-  {
-    tokenName: "LINK",
-    quantity: 4333,
-    value: 52000,
-    portfolio: 2,
-    returns24h: -2,
-  },
-  {
-    tokenName: "LTC",
-    quantity: 433,
-    value: 26000,
-    portfolio: 1,
-    returns24h: -8,
-  },
-  {
-    tokenName: "DOT",
-    quantity: 4622,
-    value: 20800,
-    portfolio: 0.8,
-    returns24h: 12,
-  },
-];
+enum ETab {
+  All = "All",
+  Yields = "Yields",
+  Tokens = "Tokens",
+}
 
+const mockFundData: IPool = {
+  id: "1",
+  address: "123",
+  name: "COOK 10",
+  symbol: "COOK100",
+  assetType: AssetType.SpotComposite,
+  ckTokens: BigNumber.from("100000"),
+  tokens: {
+    eth: BigNumber.from("700"),
+    xrp: BigNumber.from("312000"),
+    link: BigNumber.from("4333"),
+    ltc: BigNumber.from("433"),
+    dot: BigNumber.from("4622"),
+    uni: BigNumber.from("4622"),
+  },
+};
 interface IProps {
   className?: string;
+}
+interface IState {
+  tab: ETab;
 }
 
 export const TokenDistributionSection = (props: IProps) => {
   const classes = useStyles();
   const commonClasses = useCommonStyles();
+  const { tokenPrices } = useGlobal();
+  const [state, setState] = useState<IState>({ tab: ETab.All });
+
+  const setTab = (tab: ETab) => setState((prev) => ({ ...prev, tab }));
+
+  const pool = mockFundData;
+
+  const mockDistributionItems: ITokenDistributionTableItem[] = [
+    {
+      tokenId: "ltc",
+      quantity: parseEther("0.62"),
+      portfolioAllocation: 8,
+    },
+    {
+      tokenId: "dot",
+      quantity: parseEther("1"),
+      portfolioAllocation: 8,
+    },
+    {
+      tokenId: "uni",
+      quantity: parseEther("8.9"),
+      portfolioAllocation: 8,
+    },
+    {
+      tokenId: "eth",
+      quantity: parseEther("62"),
+      portfolioAllocation: 8,
+    },
+    {
+      tokenId: "xrp",
+      quantity: parseEther("22"),
+      portfolioAllocation: 8,
+    },
+    {
+      tokenId: "link",
+      quantity: parseEther("35"),
+      portfolioAllocation: 8,
+    },
+  ].map((item) => {
+    const prices: { [key in KnownToken]: BigNumber } =
+      defaultCoinPrices.current;
+    Object.keys(prices).map((key) => {
+      (prices as any)[key as KnownToken] = ZERO_NUMBER;
+    });
+    prices[item.tokenId as KnownToken] =
+      tokenPrices.current[item.tokenId as KnownToken];
+    const curValuation = calculateValuation(prices, {
+      [item.tokenId]: pool.tokens[item.tokenId],
+    });
+
+    prices[item.tokenId as KnownToken] =
+      tokenPrices.prev[item.tokenId as KnownToken];
+    const prevValuation = calculateValuation(prices, {
+      [item.tokenId]: pool.tokens[item.tokenId],
+    });
+
+    const difference = curValuation
+      .sub(prevValuation)
+      .mul(BigNumber.from("1000"));
+
+    const return24hBigNumber = prevValuation.isZero()
+      ? ZERO_NUMBER
+      : difference.div(prevValuation);
+
+    const returns24hStr = (
+      Number(formatBigNumber(return24hBigNumber, 0, 9)) / 1000
+    ).toString();
+
+    const value = item.quantity.mul(
+      tokenPrices.current[item.tokenId as KnownToken]
+    );
+
+    const valueStr = (
+      Number(formatBigNumber(value, TOKEN_DECIMALS + TOKEN_DECIMALS, 3)) / 1000
+    ).toString();
+
+    const quantityStr = (
+      Number(formatBigNumber(item.quantity, TOKEN_DECIMALS, 3)) / 1000
+    ).toString();
+
+    return {
+      ...item,
+      returns24h: return24hBigNumber,
+      value,
+      portfolioAllocation: 20,
+      tokenId: item.tokenId as KnownToken,
+      returns24hStr,
+      valueStr,
+      quantityStr,
+    };
+  });
 
   return (
     <div className={clsx(classes.root, props.className)}>
-      <SectionHeader title="Token Distribution" />
+      <div className={classes.header}>
+        {Object.values(ETab).map((tab) => (
+          <span
+            className={clsx(
+              classes.headerItem,
+              state.tab === tab ? "active" : ""
+            )}
+            key={tab}
+            onClick={() => setTab(tab)}
+          >
+            {tab}
+          </span>
+        ))}
+      </div>
       <div className={classes.content}>
-        <div className={clsx(commonClasses.table, classes.table)}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Token</TableCell>
-                <TableCell>Qty</TableCell>
-                <TableCell>Value</TableCell>
-                <TableCell>Portfolio %</TableCell>
-                <TableCell>Return (24h)</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {mockTokenDistribution.map((distribution) => (
-                <TableRow
-                  className={
-                    distribution.returns24h < 0 ? "negative" : "positive"
-                  }
-                  key={distribution.tokenName}
-                >
-                  <TableCell>{distribution.tokenName}</TableCell>
-                  <TableCell>
-                    {numberWithCommas(distribution.quantity)}
-                  </TableCell>
-                  <TableCell>${numberWithCommas(distribution.value)}</TableCell>
-                  <TableCell>{distribution.portfolio}%</TableCell>
-                  <TableCell>
-                    <span>
-                      {distribution.returns24h < 0 && <ArrowDropDownIcon />}
-                      {distribution.returns24h >= 0 && <ArrowDropUpIcon />}
-                      {distribution.returns24h}%
-                    </span>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+        <SortableAssetDistributionTable rows={mockDistributionItems} />
       </div>
     </div>
   );

@@ -1,93 +1,72 @@
-import { Typography, makeStyles } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 import clsx from "clsx";
-import { PoolChart, PoolDetailsContentPanel, Tradebox } from "components";
-import { transparentize } from "polished";
-import React from "react";
+import { PoolChart } from "components";
+import React, { useState } from "react";
 
 const useStyles = makeStyles((theme) => ({
   root: {},
-  left: {},
-  right: {},
-  leftBottom: {
+  content: {},
+  header: {
+    marginTop: 20,
     display: "flex",
-    marginTop: 50,
+    alignItems: "center",
+    marginBottom: 20,
   },
-  leftBottomItem: { flex: 1, "& + &": { marginLeft: 50 } },
-  title: {
-    color: theme.colors.default,
-    fontSize: 32,
-    lineHeight: "42px",
-  },
-  leftTop: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-end",
-  },
-  leftTopRight: {
-    display: "flex",
-    "& > span": {
-      marginRight: 24,
-      fontSize: 20,
-      lineHeight: "26px",
-      "&:first-child": {
-        color: theme.colors.warn,
-      },
-      "&:last-child": {
-        color: transparentize(0.5, theme.colors.default),
-      },
+  headerItem: {
+    cursor: "pointer",
+    userSelect: "none",
+    fontSize: 14,
+    lineHeight: 1.5,
+    color: theme.colors.primary,
+    marginRight: 40,
+    transition: "all 0.5s",
+    padding: "3px 0",
+    borderBottom: `2px solid ${theme.colors.transparent}`,
+    "&:hover": {
+      opacity: 0.7,
     },
-  },
-  leftMidddle: {
-    marginTop: 22,
+    "&.active": {
+      fontWeight: "bold",
+      borderBottom: `2px solid ${theme.colors.primary}`,
+    },
   },
 }));
 
+enum ETab {
+  Price = "Price",
+  TotalFund = "Total fund",
+}
 interface IProps {
   className?: string;
+}
+interface IState {
+  tab: ETab;
 }
 
 export const MainSection = (props: IProps) => {
   const classes = useStyles();
+  const [state, setState] = useState<IState>({ tab: ETab.Price });
+
+  const setTab = (tab: ETab) => setState((prev) => ({ ...prev, tab }));
+
   return (
     <div className={clsx(classes.root, props.className)}>
-      <div className={classes.left}>
-        <div className={classes.leftTop}>
-          <Typography className={classes.title}>$625</Typography>
-          <div className={classes.leftTopRight}>
-            <span>+8.7%</span>
-            <span>Today</span>
-          </div>
-        </div>
-        <div className={classes.leftMidddle}>
-          <PoolChart />
-        </div>
-        <div className={classes.leftBottom}>
-          <PoolDetailsContentPanel
-            className={classes.leftBottomItem}
-            data={{
-              title: "Total Asset Value",
-              value: "$1,250",
-              details: [
-                { comment: "Total Cost", value: "$1,000" },
-                { comment: "Total Returns", value: "$250（+25%)" },
-              ],
-            }}
-          />
-          <PoolDetailsContentPanel
-            className={classes.leftBottomItem}
-            data={{
-              title: "Average Cost",
-              value: "$500",
-              details: [
-                { comment: "Shares", value: "2" },
-                { comment: "Portfolio Diversity", value: "20%" },
-              ],
-            }}
-          />
-        </div>
+      <div className={classes.header}>
+        {Object.values(ETab).map((tab) => (
+          <span
+            className={clsx(
+              classes.headerItem,
+              state.tab === tab ? "active" : ""
+            )}
+            key={tab}
+            onClick={() => setTab(tab)}
+          >
+            Price
+          </span>
+        ))}
       </div>
-      <div className={classes.right}>
-        <Tradebox />
+      <div className={classes.content}>
+        <PoolChart />
       </div>
     </div>
   );

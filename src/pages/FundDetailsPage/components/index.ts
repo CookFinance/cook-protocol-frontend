@@ -6,3 +6,4 @@ export * from "./MainSection";
 export * from "./HeaderSection";
 export * from "./TotalAssetValueSection";
 export * from "./AverageCostSection";
+export * from "./AddAssetModal";
