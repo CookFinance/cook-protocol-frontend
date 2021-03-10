@@ -1,7 +1,6 @@
-import { Typography, makeStyles } from "@material-ui/core";
+import { Button, Typography, makeStyles } from "@material-ui/core";
 import { ReactComponent as LeftIcon } from "assets/svgs/left.svg";
 import clsx from "clsx";
-import { transparentize } from "polished";
 import React from "react";
 
 const useStyles = makeStyles((theme) => ({
@@ -29,10 +28,36 @@ const useStyles = makeStyles((theme) => ({
       opacity: 0.7,
     },
   },
+  center: { flex: 1 },
+  right: {
+    display: "flex",
+    alignItems: "center",
+    "& > * + *": { marginLeft: 16 },
+  },
+  button: {
+    height: 40,
+    fontSize: 16,
+    lineHeight: "28px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: theme.colors.primary,
+    color: theme.colors.default,
+    minWidth: 90,
+    fontWeight: 300,
+    "& span": {
+      textTransform: "none",
+    },
+    "&:hover": {
+      color: theme.colors.secondary,
+    },
+  },
 }));
 
 interface IProps {
   className?: string;
+  onBuy: () => void;
+  onSell: () => void;
 }
 
 export const HeaderSection = (props: IProps) => {
@@ -43,7 +68,27 @@ export const HeaderSection = (props: IProps) => {
         <LeftIcon />
         <Typography>Fund name:</Typography>
       </div>
-      <Typography>Cook 10 - fund manager portfolio view</Typography>
+      <Typography className={classes.center}>
+        Cook 10 - fund manager portfolio view
+      </Typography>
+      <div className={classes.right}>
+        <Button
+          className={classes.button}
+          color="secondary"
+          onClick={props.onBuy}
+          variant="outlined"
+        >
+          Buy
+        </Button>
+        <Button
+          className={classes.button}
+          color="secondary"
+          onClick={props.onSell}
+          variant="outlined"
+        >
+          Sell
+        </Button>
+      </div>
     </div>
   );
 };

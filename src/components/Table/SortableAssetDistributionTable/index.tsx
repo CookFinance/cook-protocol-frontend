@@ -208,6 +208,10 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: theme.colors.primary,
       height: 4,
     },
+    row: {
+      display: "flex",
+      alignItems: "center",
+    },
   })
 );
 
@@ -259,11 +263,13 @@ export const SortableAssetDistributionTable = (props: IProps) => {
                 <TableRow hover key={row.tokenId} tabIndex={-1}>
                   <TableCell
                     align="left"
+                    className={classes.row}
                     id={labelId}
                     padding="none"
                     scope="row"
                   >
                     <Icon />
+                    &nbsp;
                     {row.tokenId.toUpperCase()}
                   </TableCell>
                   <TableCell align="center">{row.quantityStr}</TableCell>

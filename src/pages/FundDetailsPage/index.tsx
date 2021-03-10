@@ -1,7 +1,7 @@
 import { Button, Typography, makeStyles } from "@material-ui/core";
 import { ReactComponent as PlusIcon } from "assets/svgs/plus.svg";
 import clsx from "clsx";
-import { SectionHeader } from "components";
+import { BuySellModal, SectionHeader } from "components";
 import { BigNumber } from "ethers";
 import { transparentize } from "polished";
 import React, { useState } from "react";
@@ -92,11 +92,17 @@ const mockFundData: IPool = {
 
 interface IState {
   assetModalVisible: boolean;
+  sellModalVisible: boolean;
+  buyModalVisible: boolean;
 }
 
 const FundDetailsPage = () => {
   const classes = useStyles();
-  const [state, setState] = useState<IState>({ assetModalVisible: false });
+  const [state, setState] = useState<IState>({
+    assetModalVisible: false,
+    sellModalVisible: false,
+    buyModalVisible: false,
+  });
 
   const setAssetModalVisible = (assetModalVisible: boolean) =>
     setState((prev) => ({ ...prev, assetModalVisible }));
@@ -105,10 +111,26 @@ const FundDetailsPage = () => {
     setAssetModalVisible(true);
   };
 
+  const onBuy = () => {
+    setState((prev) => ({ ...prev, buyModalVisible: true }));
+  };
+
+  const onSell = () => {
+    setState((prev) => ({ ...prev, sellModalVisible: true }));
+  };
+
+  const onCloseSellBuyModal = () => {
+    setState((prev) => ({
+      ...prev,
+      sellModalVisible: false,
+      buyModalVisible: false,
+    }));
+  };
+
   return (
     <div className={clsx(classes.root)}>
       <div className={classes.left}>
-        <HeaderSection />
+        <HeaderSection onBuy={onBuy} onSell={onSell} />
         <MainSection className={classes.section} />
         <div className={classes.swapWrapper}>
           <SectionHeader title="Asset distribution" />
@@ -138,10 +160,19 @@ const FundDetailsPage = () => {
         <SectionHeader title="Whitelist" />
         <WhitelistSection className={classes.section} data={mockFundData} />
       </div>
-      <AddAssetModal
-        onClose={() => setAssetModalVisible(false)}
-        visible={state.assetModalVisible}
-      />
+      {state.assetModalVisible && (
+        <AddAssetModal
+          onClose={() => setAssetModalVisible(false)}
+          visible={state.assetModalVisible}
+        />
+      )}
+      {(state.buyModalVisible || state.sellModalVisible) && (
+        <BuySellModal
+          isSell={state.sellModalVisible}
+          onClose={onCloseSellBuyModal}
+          visible
+        />
+      )}
     </div>
   );
 };

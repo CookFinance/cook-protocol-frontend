@@ -112,13 +112,7 @@ export const TokenDistributionSection = (props: IProps) => {
       portfolioAllocation: 8,
     },
   ].map((item) => {
-    const prices: { [key in KnownToken]: BigNumber } =
-      defaultCoinPrices.current;
-    Object.keys(prices).map((key) => {
-      (prices as any)[key as KnownToken] = ZERO_NUMBER;
-    });
-    prices[item.tokenId as KnownToken] =
-      tokenPrices.current[item.tokenId as KnownToken];
+    const prices = tokenPrices.current;
     const curValuation = calculateValuation(prices, {
       [item.tokenId]: pool.tokens[item.tokenId],
     });

@@ -90,6 +90,7 @@ export const GlobalProvider: React.FC = (props) => {
   useEffect(() => {
     const loadCoinPrices = async () => {
       const prices = await getCoinsPrices();
+
       setState((prev) => ({ ...prev, tokenPrices: prices }));
     };
     loadCoinPrices();

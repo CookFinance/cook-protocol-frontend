@@ -1,21 +1,12 @@
-import {
-  Button,
-  CircularProgress,
-  Divider,
-  Modal,
-  Typography,
-  makeStyles,
-} from "@material-ui/core";
-import CloseIcon from "@material-ui/icons/Close";
+import { Button, Typography, makeStyles } from "@material-ui/core";
 import { ReactComponent as ArrowDownIcon } from "assets/svgs/arrow_down.svg";
 import { TokenInput } from "components/Input";
 import { TokenSelectList } from "components/List";
 import { TOKEN_DECIMALS } from "config/constants";
-import { tokenIds } from "config/network";
 import { useGlobal } from "contexts";
 import { BigNumber } from "ethers";
 import { parseEther } from "ethers/lib/utils";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { KnownToken } from "types";
 import { formatBigNumber } from "utils";
 import { getLogger } from "utils/logger";

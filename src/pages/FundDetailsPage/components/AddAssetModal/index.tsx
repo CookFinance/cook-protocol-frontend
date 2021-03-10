@@ -1,15 +1,27 @@
-import { makeStyles } from "@material-ui/core";
-import { BaseModal } from "components";
+import { Typography, makeStyles } from "@material-ui/core";
+import clsx from "clsx";
+import { BaseModal, TokenSelectList } from "components";
+import { transparentize } from "polished";
 import React, { useState } from "react";
+import useCommonStyles from "styles/common";
 import { KnownToken } from "types";
 
 const useStyles = makeStyles((theme) => ({
   selectItem: {
-    height: 240,
+    height: 200,
     display: "flex",
     alignItems: "center",
     flexDirection: "column",
     justifyContent: "center",
+    cursor: "pointer",
+    transition: "all 0.3s",
+    border: `1px solid ${transparentize(0.9, theme.colors.secondary)}`,
+    "&:hover": {
+      opacity: 0.7,
+    },
+    "& + &": {
+      marginTop: 24,
+    },
   },
   selectItemTitle: {
     fontSize: 20,
@@ -17,8 +29,13 @@ const useStyles = makeStyles((theme) => ({
   },
   selectItemDescription: {
     fontSize: 16,
-    color: theme.colors.secondary,
+    color: transparentize(0.4, theme.colors.secondary),
     marginTop: 16,
+  },
+  tokenList: {
+    maxHeight: "50vh",
+    overflowY: "auto",
+    padding: "0 4px",
   },
 }));
 
@@ -43,19 +60,57 @@ export const AddAssetModal = (props: IProps) => {
   const [state, setState] = useState<IState>({
     step: EStep.Select,
   });
+  const classes = useStyles();
+  const commonClasses = useCommonStyles();
 
-  const onBack = () => {};
+  const selectStep = (step: EStep) => setState((prev) => ({ ...prev, step }));
 
-  const renderSelect = () => {
-    return <div></div>;
+  const onBack = () => {
+    selectStep(EStep.Select);
   };
 
-  const renderTokenSelect = () => {};
+  const renderSelect = () => {
+    return (
+      <div>
+        <div
+          className={classes.selectItem}
+          onClick={() => selectStep(EStep.Token)}
+        >
+          <Typography className={classes.selectItemTitle}>Token</Typography>
+          <Typography className={classes.selectItemDescription}>
+            Description
+          </Typography>
+        </div>
+        <div
+          className={classes.selectItem}
+          onClick={() => selectStep(EStep.Yield)}
+        >
+          <Typography className={classes.selectItemTitle}>Yield</Typography>
+          <Typography className={classes.selectItemDescription}>
+            Description
+          </Typography>
+        </div>
+      </div>
+    );
+  };
+
+  const renderTokenSelect = () => {
+    return (
+      <div className={clsx(classes.tokenList, commonClasses.scroll)}>
+        <TokenSelectList
+          disabledTokens={[]}
+          onSelect={(token) => {}}
+          searchable={false}
+        />
+      </div>
+    );
+  };
 
   const renderYieldSelect = () => {};
 
   return (
     <BaseModal
+      backVisible={state.step !== EStep.Select}
       onBack={onBack}
       onClose={onClose}
       title={
