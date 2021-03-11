@@ -2,7 +2,7 @@ import { makeStyles } from "@material-ui/core";
 import clsx from "clsx";
 import { SortableAssetDistributionTable } from "components";
 import { TOKEN_DECIMALS } from "config/constants";
-import { defaultCoinPrices, useGlobal } from "contexts";
+import { useConnectedWeb3Context, useGlobal } from "contexts";
 import { BigNumber } from "ethers";
 import { parseEther } from "ethers/lib/utils";
 import React, { useState } from "react";
@@ -74,6 +74,7 @@ export const TokenDistributionSection = (props: IProps) => {
   const classes = useStyles();
   const commonClasses = useCommonStyles();
   const { tokenPrices } = useGlobal();
+  const { networkId } = useConnectedWeb3Context();
   const [state, setState] = useState<IState>({ tab: ETab.All });
 
   const setTab = (tab: ETab) => setState((prev) => ({ ...prev, tab }));
@@ -176,7 +177,10 @@ export const TokenDistributionSection = (props: IProps) => {
         ))}
       </div>
       <div className={classes.content}>
-        <SortableAssetDistributionTable rows={mockDistributionItems} />
+        <SortableAssetDistributionTable
+          networkId={networkId}
+          rows={mockDistributionItems}
+        />
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import { ReactComponent as BalSvg } from "assets/svgs/token/bal.svg";
+import { ReactComponent as BtcSvg } from "assets/svgs/token/btc.svg";
 import { ReactComponent as CompSvg } from "assets/svgs/token/comp.svg";
 import { ReactComponent as DaiSvg } from "assets/svgs/token/dai.svg";
 import { ReactComponent as DotSvg } from "assets/svgs/token/dot.svg";
@@ -16,15 +17,14 @@ import { ReactComponent as CoinbaseSVG } from "assets/svgs/wallet/coinbase.svg";
 import { ReactComponent as FormaticSVG } from "assets/svgs/wallet/fortmatic.svg";
 import { ReactComponent as MetaMaskSVG } from "assets/svgs/wallet/metamask-color.svg";
 import { ReactComponent as WalletConnectSVG } from "assets/svgs/wallet/wallet-connect.svg";
-import { KnownToken } from "types";
+import { ICoinPrices, KnownToken } from "types";
 import { ConnectorNames } from "types/enums";
+import { ZERO_NUMBER } from "utils/number";
 
 export const STORAGE_KEY_SETTINGS = "settings";
 export const STORAGE_KEY_CONNECTOR = "CONNECTOR";
 
-export const INFURA_PROJECT_ID = process.env.REACT_APP_INFURA_PROJECT_ID || "";
-
-export const DEFAULT_NETWORK_ID = 1;
+export const DEFAULT_NETWORK_ID = 256;
 export const LOGGER_ID = "COOK PROTOCOL DEMO:";
 
 export const TOKEN_DECIMALS = 18;
@@ -37,6 +37,7 @@ export const WALLET_ICONS: { [key in ConnectorNames]: React.ElementType } = {
 };
 
 export const TOKEN_ICONS: { [key in KnownToken]: React.ElementType } = {
+  btc: BtcSvg,
   comp: CompSvg,
   uni: UniSvg,
   eth: EthSvg,
@@ -58,10 +59,75 @@ export const PlATFORMS = [
   { label: "Uniswap", value: "uni" },
 ];
 
-export const TOKENS = [
-  { label: "ETH", value: "eth" },
-  { label: "LINK", value: "link" },
-  { label: "XLM", value: "xlm" },
-  { label: "LTC", value: "ltc" },
-  { label: "DOT", value: "dot" },
-];
+export const TEST_MODE = process.env.REACT_APP_TEST || true;
+
+export const NETWORK_CONFIG = TEST_MODE
+  ? {
+      method: "wallet_addEthereumChain",
+      params: [
+        {
+          chainId: "0x100",
+          chainName: "Heco Testnet",
+          nativeCurrency: {
+            name: "Heco",
+            symbol: "HT",
+            decimals: 18,
+          },
+          rpcUrls: ["https://http-testnet.hecochain.com"],
+          blockExplorerUrls: ["https://testnet.hecoinfo.com/"],
+        },
+      ],
+    }
+  : {
+      method: "wallet_addEthereumChain",
+      params: [
+        {
+          chainId: "0x80",
+          chainName: "Heco Mainnet",
+          nativeCurrency: {
+            name: "Heco",
+            symbol: "HT",
+            decimals: 18,
+          },
+          rpcUrls: ["https://http-mainnet.hecochain.com"],
+          blockExplorerUrls: ["https://scan.hecochain.com"],
+        },
+      ],
+    };
+
+export const defaultCoinPrices: ICoinPrices = {
+  current: {
+    btc: ZERO_NUMBER,
+    eth: ZERO_NUMBER,
+    link: ZERO_NUMBER,
+    xrp: ZERO_NUMBER,
+    ltc: ZERO_NUMBER,
+    dot: ZERO_NUMBER,
+    uni: ZERO_NUMBER,
+    comp: ZERO_NUMBER,
+    bal: ZERO_NUMBER,
+    yfi: ZERO_NUMBER,
+    rep: ZERO_NUMBER,
+    dai: ZERO_NUMBER,
+    xlm: ZERO_NUMBER,
+    zrx: ZERO_NUMBER,
+    usdt: ZERO_NUMBER,
+  },
+  prev: {
+    btc: ZERO_NUMBER,
+    eth: ZERO_NUMBER,
+    link: ZERO_NUMBER,
+    xrp: ZERO_NUMBER,
+    ltc: ZERO_NUMBER,
+    dot: ZERO_NUMBER,
+    uni: ZERO_NUMBER,
+    comp: ZERO_NUMBER,
+    bal: ZERO_NUMBER,
+    yfi: ZERO_NUMBER,
+    rep: ZERO_NUMBER,
+    dai: ZERO_NUMBER,
+    xlm: ZERO_NUMBER,
+    zrx: ZERO_NUMBER,
+    usdt: ZERO_NUMBER,
+  },
+};

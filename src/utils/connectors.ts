@@ -15,7 +15,7 @@ const injected = new InjectedConnector({
 });
 
 const walletconnect = new WalletConnectConnector({
-  rpc: { 1: supportedNetworkURLs[1] },
+  rpc: { 128: supportedNetworkURLs[128] },
   bridge: "https://bridge.walletconnect.org",
   qrcode: true,
   pollingInterval: POLLING_INTERVAL,
@@ -23,14 +23,11 @@ const walletconnect = new WalletConnectConnector({
 
 const fortmatic = new FortmaticConnector({
   apiKey: process.env.REACT_APP_FORTMATIC_API_KEY as string,
-  chainId:
-    process.env.NODE_ENV === "development"
-      ? networkIds.KOVAN
-      : networkIds.MAINNET,
+  chainId: 42,
 });
 
 const walletlink = new WalletLinkConnector({
-  url: supportedNetworkURLs[1],
+  url: supportedNetworkURLs[128],
   appName: "COOK PROTOCOL FRONTEND",
 });
 

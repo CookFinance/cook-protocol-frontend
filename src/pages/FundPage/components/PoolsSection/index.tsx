@@ -17,14 +17,14 @@ import clsx from "clsx";
 import { TOKEN_DECIMALS } from "config/constants";
 import { useGlobal } from "contexts";
 import { BigNumber } from "ethers";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import useCommonStyles from "styles/common";
-import { ICoinPrices, IPool } from "types";
+import { IPool } from "types";
 import { AssetType } from "types/enums";
 import { formatBigNumber, numberWithCommas } from "utils";
 import { ZERO_NUMBER } from "utils/number";
-import { calculateValuation, getCoinsPrices } from "utils/token";
+import { calculateValuation } from "utils/token";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -66,7 +66,6 @@ const mockPools: IPool[] = [
     assetType: AssetType.SpotComposite,
     ckTokens: BigNumber.from("100000"),
     tokens: {
-      btc: BigNumber.from("100"),
       eth: BigNumber.from("700"),
       xrp: BigNumber.from("312000"),
       link: BigNumber.from("4333"),
@@ -132,14 +131,6 @@ export const PoolsSection = () => {
   const [state, setState] = useState<IState>({
     filter: { type: "", platform: "", token: "" },
   });
-
-  useEffect(() => {
-    const loadCoinPrices = async () => {
-      const prices = await getCoinsPrices();
-      setState((prev) => ({ ...prev, tokenPrices: prices }));
-    };
-    loadCoinPrices();
-  }, []);
 
   const onChangeFilter = (key: string) => (
     event: React.ChangeEvent<{

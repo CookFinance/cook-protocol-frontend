@@ -1,7 +1,7 @@
 import { FormControl, MenuItem, Select, makeStyles } from "@material-ui/core";
 import { SortableFundsTable } from "components";
 import { TOKEN_DECIMALS } from "config/constants";
-import { useGlobal } from "contexts";
+import { useConnectedWeb3Context, useGlobal } from "contexts";
 import { BigNumber } from "ethers";
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
@@ -81,6 +81,7 @@ export const PoolsSection = (props: IProps) => {
   const classes = useStyles();
   const commonClasses = useCommonStyles();
   const history = useHistory();
+  const { networkId } = useConnectedWeb3Context();
 
   const [state, setState] = useState<IState>({
     filter: { type: "", platform: "", token: "" },
@@ -157,7 +158,7 @@ export const PoolsSection = (props: IProps) => {
       </div>
       <div className={classes.content}>
         <div>
-          <SortableFundsTable rows={props.pools} />
+          <SortableFundsTable networkId={networkId} rows={props.pools} />
         </div>
       </div>
     </div>

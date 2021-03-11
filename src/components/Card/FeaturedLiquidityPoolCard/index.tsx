@@ -1,7 +1,9 @@
 import { Divider, Typography, makeStyles } from "@material-ui/core";
 import clsx from "clsx";
 import { FundChart } from "components/Chart";
+import { DEFAULT_NETWORK_ID } from "config/constants";
 import { getToken } from "config/network";
+import { useConnectedWeb3Context } from "contexts";
 import { transparentize } from "polished";
 import React from "react";
 import { IPoolDetails, KnownToken } from "types";
@@ -75,6 +77,7 @@ interface IProps {
 
 export const FeaturedLiquidityPoolCard = (props: IProps) => {
   const classes = useStyles();
+  const { networkId } = useConnectedWeb3Context();
   const {
     data: { assetType, name, returns24h, tokens },
   } = props;
@@ -112,7 +115,10 @@ export const FeaturedLiquidityPoolCard = (props: IProps) => {
             {Object.keys(tokens)
               .slice(0, 4)
               .map((key) => {
-                const token = getToken(key as KnownToken);
+                const token = getToken(
+                  key as KnownToken,
+                  networkId || DEFAULT_NETWORK_ID
+                );
                 const { icon: Icon } = token;
                 return (
                   <span className={classes.icon} key={token.name}>

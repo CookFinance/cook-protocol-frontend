@@ -7,6 +7,7 @@ import TableRow from "@material-ui/core/TableRow";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
+import { DEFAULT_NETWORK_ID } from "config/constants";
 import { getToken } from "config/network";
 import { BigNumber } from "ethers";
 import { transparentize } from "polished";
@@ -222,12 +223,13 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface IProps {
   rows: Data[];
+  networkId?: number;
 }
 
 export const SortableFundsTable = (props: IProps) => {
   const classes = useStyles();
   const [order, setOrder] = React.useState<SortOrder>("asc");
-  const { rows } = props;
+  const { networkId = DEFAULT_NETWORK_ID, rows } = props;
   const [orderBy, setOrderBy] = React.useState<keyof Data>("name");
 
   const handleRequestSort = (
@@ -274,7 +276,10 @@ export const SortableFundsTable = (props: IProps) => {
                         {Object.keys(row.tokens)
                           .slice(0, 8)
                           .map((key) => {
-                            const token = getToken(key as KnownToken);
+                            const token = getToken(
+                              key as KnownToken,
+                              networkId || DEFAULT_NETWORK_ID
+                            );
                             const { icon: Icon } = token;
                             return (
                               <span className={classes.icon} key={token.name}>

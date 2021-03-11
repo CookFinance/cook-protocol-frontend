@@ -1,44 +1,10 @@
 import { UniswapModal } from "components";
+import { defaultCoinPrices } from "config/constants";
 import { useConnectedWeb3Context } from "contexts/connectedWeb3";
 import React, { useEffect, useState } from "react";
-import { ICoinPrices, ICreateFund, IGlobalData, Maybe } from "types";
+import { ICreateFund, IGlobalData } from "types";
 import { ZERO_NUMBER } from "utils/number";
 import { getCoinsPrices } from "utils/token";
-
-export const defaultCoinPrices: ICoinPrices = {
-  current: {
-    eth: ZERO_NUMBER,
-    link: ZERO_NUMBER,
-    xrp: ZERO_NUMBER,
-    ltc: ZERO_NUMBER,
-    dot: ZERO_NUMBER,
-    uni: ZERO_NUMBER,
-    comp: ZERO_NUMBER,
-    bal: ZERO_NUMBER,
-    yfi: ZERO_NUMBER,
-    rep: ZERO_NUMBER,
-    dai: ZERO_NUMBER,
-    xlm: ZERO_NUMBER,
-    zrx: ZERO_NUMBER,
-    usdt: ZERO_NUMBER,
-  },
-  prev: {
-    eth: ZERO_NUMBER,
-    link: ZERO_NUMBER,
-    xrp: ZERO_NUMBER,
-    ltc: ZERO_NUMBER,
-    dot: ZERO_NUMBER,
-    uni: ZERO_NUMBER,
-    comp: ZERO_NUMBER,
-    bal: ZERO_NUMBER,
-    yfi: ZERO_NUMBER,
-    rep: ZERO_NUMBER,
-    dai: ZERO_NUMBER,
-    xlm: ZERO_NUMBER,
-    zrx: ZERO_NUMBER,
-    usdt: ZERO_NUMBER,
-  },
-};
 
 const GlobalContext = React.createContext<
   IGlobalData & {

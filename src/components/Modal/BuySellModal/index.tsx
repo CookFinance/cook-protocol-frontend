@@ -3,9 +3,9 @@ import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
 import clsx from "clsx";
 import { TokenInput } from "components/Input";
 import { TokenSelectList } from "components/List";
-import { TOKEN_DECIMALS } from "config/constants";
+import { DEFAULT_NETWORK_ID, TOKEN_DECIMALS } from "config/constants";
 import { getToken } from "config/network";
-import { useGlobal } from "contexts";
+import { useConnectedWeb3Context, useGlobal } from "contexts";
 import { BigNumber } from "ethers";
 import { parseEther } from "ethers/lib/utils";
 import { transparentize } from "polished";
@@ -113,6 +113,7 @@ export const BuySellModal = (props: IProps) => {
     tokenPrices: { current: currentTokenPrices },
   } = useGlobal();
   const { isSell } = props;
+  const { networkId } = useConnectedWeb3Context();
   const [state, setState] = useState<IState>({
     token: "eth",
     amount: ZERO_NUMBER,
@@ -185,7 +186,9 @@ export const BuySellModal = (props: IProps) => {
             <Typography align="right" className={classes.price}>
               {formatBigNumber(
                 price,
-                TOKEN_DECIMALS + getToken(state.token).decimals
+                TOKEN_DECIMALS +
+                  getToken(state.token, networkId || DEFAULT_NETWORK_ID)
+                    .decimals
               )}
               &nbsp; USD
             </Typography>

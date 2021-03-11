@@ -11,11 +11,15 @@ export interface ISettings {
 export interface INetwork {
   label: string;
   url: string;
-  contracts: {};
+  contracts: {
+    index: string;
+  };
   etherscanUri: string;
 }
 
-export type NetworkId = 1 | 42;
+export type NetworkId = 128 | 256;
+
+export type KnownContracts = keyof INetwork["contracts"];
 
 export interface IToken {
   address: string;
@@ -67,6 +71,7 @@ export interface ITokenDistributionTableItem extends ITokenDistributionItem {
 }
 
 export type KnownToken =
+  | "btc"
   | "eth"
   | "link"
   | "xrp"
@@ -86,6 +91,9 @@ export interface IKnownTokenData {
   name: string;
   symbol: string;
   coingeckoId: string;
+  addresses: { [key in NetworkId]: string };
+  image: string;
+  decimals: number;
 }
 
 export interface ICoinPrices {
@@ -101,7 +109,6 @@ export interface ICreateFund {
   acceptedTokens: string[];
   liquidityPoolType: string;
   platformWhitelist: string[];
-  tokenWhitelist: string[];
   allowLeverage: string;
 }
 

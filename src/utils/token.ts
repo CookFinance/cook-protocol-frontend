@@ -1,8 +1,8 @@
 import axios from "axios";
+import { defaultCoinPrices } from "config/constants";
 import { getToken, tokenIds } from "config/network";
-import { defaultCoinPrices } from "contexts";
 import { BigNumber, utils } from "ethers";
-import { parseEther, parseUnits } from "ethers/lib/utils";
+import { parseEther } from "ethers/lib/utils";
 import { getCoingeckoService } from "services/coingecko";
 import { ICoinPrices, KnownToken } from "types";
 import { formatBigNumber, getDecimalsLimitedString } from "utils";

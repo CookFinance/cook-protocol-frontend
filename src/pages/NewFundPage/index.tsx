@@ -1,10 +1,9 @@
-import { Typography, makeStyles } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 import clsx from "clsx";
 import CreateLiquidityPoolForm from "components/Form/CreateLiquidityPoolForm";
 import { useGlobal } from "contexts";
 import React from "react";
 import { useHistory } from "react-router-dom";
-import useCommonStyles from "styles/common";
 import { ICreateFund } from "types";
 
 const useStyles = makeStyles((theme) => ({

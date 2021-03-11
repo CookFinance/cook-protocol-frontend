@@ -8,6 +8,7 @@ import TableSortLabel from "@material-ui/core/TableSortLabel";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
+import { DEFAULT_NETWORK_ID } from "config/constants";
 import { getToken } from "config/network";
 import { BigNumber } from "ethers";
 import { transparentize } from "polished";
@@ -217,12 +218,13 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface IProps {
   rows: ITokenDistributionTableItem[];
+  networkId?: number;
 }
 
 export const SortableAssetDistributionTable = (props: IProps) => {
   const classes = useStyles();
   const [order, setOrder] = React.useState<SortOrder>("asc");
-  const { rows } = props;
+  const { networkId = DEFAULT_NETWORK_ID, rows } = props;
   const [orderBy, setOrderBy] = React.useState<
     keyof ITokenDistributionTableItem
   >("tokenId");
@@ -256,7 +258,10 @@ export const SortableAssetDistributionTable = (props: IProps) => {
               getComparator(order, orderBy)
             ).map((row, index) => {
               const labelId = `asset-distribution-table-checkbox-${index}`;
-              const tokenInfo = getToken(row.tokenId);
+              const tokenInfo = getToken(
+                row.tokenId,
+                networkId || DEFAULT_NETWORK_ID
+              );
               const Icon = tokenInfo.icon;
 
               return (

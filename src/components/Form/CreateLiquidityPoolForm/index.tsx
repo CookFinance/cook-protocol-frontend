@@ -12,12 +12,13 @@ import {
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import CloseIcon from "@material-ui/icons/Close";
 import clsx from "clsx";
-import { PlATFORMS, TOKENS, TOKEN_ICONS } from "config/constants";
+import { PlATFORMS, TOKEN_ICONS } from "config/constants";
+import { getToken, tokenIds } from "config/network";
 import { Form, Formik } from "formik";
 import { transparentize } from "polished";
 import React from "react";
 import useCommonStyles from "styles/common";
-import { ICreateFund } from "types";
+import { ICreateFund, KnownToken } from "types";
 import * as Yup from "yup";
 
 const useStyles = makeStyles((theme) => ({
@@ -176,7 +177,6 @@ const CreateLiquidityPoolForm = (props: IProps) => {
     acceptedTokens: [],
     liquidityPoolType: "",
     platformWhitelist: [],
-    tokenWhitelist: [],
     allowLeverage: "",
     accepted: false,
   };
@@ -184,18 +184,16 @@ const CreateLiquidityPoolForm = (props: IProps) => {
   return (
     <Formik
       initialValues={initialFormValue}
-      onSubmit={async (values, { setErrors }) => {
-        console.log("-=-=-=-=");
+      onSubmit={async (values) => {
         props.onSubmit(values);
       }}
       validationSchema={Yup.object().shape({
-        name: Yup.string().required(),
+        name: Yup.string(),
         symbol: Yup.string().required(),
-        about: Yup.string().required(),
+        about: Yup.string(),
         fee: Yup.number().required(),
         acceptedTokens: Yup.array().required(),
         platformWhitelist: Yup.array().required(),
-        tokenWhitelist: Yup.array().required(),
         liquidityPoolType: Yup.string().required(),
         allowLeverage: Yup.string().required(),
       })}
@@ -334,13 +332,15 @@ const CreateLiquidityPoolForm = (props: IProps) => {
                 id="platform-white-list"
                 label="Platform Whitelist:"
                 onChange={(e) => {
+                  if (values.platformWhitelist.includes(e.target.value)) {
+                    return;
+                  }
                   setFieldValue("platformWhitelist", [
                     ...values.platformWhitelist,
                     e.target.value,
                   ]);
                 }}
                 placeholder="Add platform whitelist"
-                required
                 select
                 value=""
                 variant="outlined"
@@ -395,32 +395,35 @@ const CreateLiquidityPoolForm = (props: IProps) => {
                 id="acceptedTokens"
                 label="Search by symbol or name"
                 onChange={(e) => {
+                  if (values.acceptedTokens.includes(e.target.value)) return;
                   setFieldValue("acceptedTokens", [
                     ...values.acceptedTokens,
                     e.target.value,
                   ]);
                 }}
                 placeholder="Search..."
-                required
                 select
                 value=""
                 variant="outlined"
               >
-                {TOKENS.map((e) => (
-                  <MenuItem key={e.value} value={e.value}>
-                    {e.label}
-                  </MenuItem>
-                ))}
+                {Object.keys(tokenIds).map((tokenId) => {
+                  const token = getToken(tokenId as KnownToken);
+                  return (
+                    <MenuItem key={token.symbol} value={token.symbol}>
+                      {token.symbol.toUpperCase()}
+                    </MenuItem>
+                  );
+                })}
               </TextField>
               <div className={classes.assets}>
                 {values.acceptedTokens.map((tokenValue) => {
-                  const token = TOKENS.find((e) => e.value === tokenValue);
+                  const token = getToken(tokenValue as KnownToken);
                   const Icon = (TOKEN_ICONS as any)[tokenValue];
                   if (!token || !Icon) return null;
                   return (
                     <div className={classes.asset} key={tokenValue}>
                       <Icon />
-                      <span>{token.label}</span>
+                      <span>{token.name}</span>
                       <span
                         onClick={() => {
                           setFieldValue(
@@ -452,7 +455,7 @@ const CreateLiquidityPoolForm = (props: IProps) => {
             <Button
               className={classes.submit}
               color="secondary"
-              disabled={!values.accepted || !isValid}
+              disabled={!values.accepted || !isValid || isSubmitting}
               type="submit"
               variant="contained"
             >

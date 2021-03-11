@@ -1,7 +1,9 @@
 import { Typography, makeStyles } from "@material-ui/core";
 import clsx from "clsx";
 import { SectionHeader } from "components";
+import { DEFAULT_NETWORK_ID } from "config/constants";
 import { getToken } from "config/network";
+import { useConnectedWeb3Context } from "contexts";
 import { transparentize } from "polished";
 import React from "react";
 import { IPool, KnownToken } from "types";
@@ -41,6 +43,7 @@ interface IProps {
 export const WhitelistSection = (props: IProps) => {
   const classes = useStyles();
   const { data } = props;
+  const { networkId } = useConnectedWeb3Context();
 
   return (
     <div className={clsx(classes.root, props.className)}>
@@ -48,7 +51,10 @@ export const WhitelistSection = (props: IProps) => {
         <div className={classes.sectionContent}>
           <Typography className={classes.sectionTitle}>Tokens:</Typography>
           {Object.keys(data.tokens).map((token) => {
-            const tokenInfo = getToken(token as KnownToken);
+            const tokenInfo = getToken(
+              token as KnownToken,
+              networkId || DEFAULT_NETWORK_ID
+            );
             const Icon = tokenInfo.icon;
             return (
               <div className={classes.tokenRow} key={token}>

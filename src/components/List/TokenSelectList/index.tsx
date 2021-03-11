@@ -1,9 +1,9 @@
 import { TextField, Typography, makeStyles } from "@material-ui/core";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import clsx from "clsx";
-import { TOKEN_DECIMALS } from "config/constants";
+import { DEFAULT_NETWORK_ID, TOKEN_DECIMALS } from "config/constants";
 import { getToken, tokenIds } from "config/network";
-import { useGlobal } from "contexts";
+import { useConnectedWeb3Context, useGlobal } from "contexts";
 import React, { useState } from "react";
 import { KnownToken, SortOrder } from "types";
 import { formatBigNumber, numberWithCommas } from "utils";
@@ -86,6 +86,7 @@ export const TokenSelectList = (props: IProps) => {
   const {
     tokenPrices: { current: currentTokenPrices },
   } = useGlobal();
+  const { networkId } = useConnectedWeb3Context();
   const { disabledTokens, onSelect, searchable } = props;
   const [state, setState] = useState<IState>({ keyword: "", order: "asc" });
 
@@ -128,7 +129,10 @@ export const TokenSelectList = (props: IProps) => {
         </Typography>
         {tokensToShow
           .filter((token) => {
-            const tokenInfo = getToken(token as KnownToken);
+            const tokenInfo = getToken(
+              token as KnownToken,
+              networkId || DEFAULT_NETWORK_ID
+            );
             if (state.keyword === "") return true;
             if (
               tokenInfo.symbol.includes(state.keyword.toLowerCase()) ||
@@ -153,7 +157,10 @@ export const TokenSelectList = (props: IProps) => {
             return 0;
           })
           .map((token) => {
-            const tokenInfo = getToken(token as KnownToken);
+            const tokenInfo = getToken(
+              token as KnownToken,
+              networkId || DEFAULT_NETWORK_ID
+            );
             const price = currentTokenPrices[token as KnownToken];
             const Icon = tokenInfo.icon;
 

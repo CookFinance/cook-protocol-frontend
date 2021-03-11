@@ -1,4 +1,4 @@
-import { Typography, makeStyles } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 import clsx from "clsx";
 import { TOKEN_DECIMALS } from "config/constants";
 import { useGlobal } from "contexts";

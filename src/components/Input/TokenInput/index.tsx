@@ -1,8 +1,9 @@
 import { InputAdornment, TextField, makeStyles } from "@material-ui/core";
 import { ReactComponent as DownIcon } from "assets/svgs/down.svg";
 import clsx from "clsx";
-import { TOKEN_DECIMALS } from "config/constants";
+import { DEFAULT_NETWORK_ID, TOKEN_DECIMALS } from "config/constants";
 import { getToken } from "config/network";
+import { useConnectedWeb3Context } from "contexts";
 import { BigNumber, ethers } from "ethers";
 import React, { useEffect, useState } from "react";
 import { KnownToken } from "types";
@@ -84,9 +85,10 @@ export const TokenInput = (props: IProps) => {
     onMax,
     token,
   } = props;
+  const { networkId } = useConnectedWeb3Context();
   const classes = useStyles();
   const [currentValue, setCurrentValue] = useState("");
-  const tokenInfo = getToken(token);
+  const tokenInfo = getToken(token, networkId || DEFAULT_NETWORK_ID);
 
   useEffect(() => {
     if (amount.eq(ZERO_NUMBER)) {
