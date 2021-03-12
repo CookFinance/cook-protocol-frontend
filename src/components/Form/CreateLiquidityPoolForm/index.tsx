@@ -166,7 +166,7 @@ export interface IProps {
   onSubmit: (_: ICreateFund) => void;
 }
 
-const CreateLiquidityPoolForm = (props: IProps) => {
+export const CreateLiquidityPoolForm = (props: IProps) => {
   const classes = useStyles();
   const commonClasses = useCommonStyles();
   const initialFormValue: ICreateFundFormValues = {
@@ -188,7 +188,7 @@ const CreateLiquidityPoolForm = (props: IProps) => {
         props.onSubmit(values);
       }}
       validationSchema={Yup.object().shape({
-        name: Yup.string(),
+        name: Yup.string().required(),
         symbol: Yup.string().required(),
         about: Yup.string(),
         fee: Yup.number().required(),
@@ -229,6 +229,23 @@ const CreateLiquidityPoolForm = (props: IProps) => {
                 General Info
               </Typography>
               <Grid container spacing={3}>
+                <Grid item xs={6}>
+                  <TextField
+                    InputLabelProps={{ shrink: true }}
+                    error={Boolean(touched.name && errors.name)}
+                    fullWidth
+                    helperText={touched.name && errors.name}
+                    id="name"
+                    label="Name"
+                    name="name"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    placeholder="Enter name"
+                    required
+                    value={values.name}
+                    variant="outlined"
+                  />
+                </Grid>
                 <Grid item xs={6}>
                   <TextField
                     InputLabelProps={{ shrink: true }}
@@ -468,5 +485,3 @@ const CreateLiquidityPoolForm = (props: IProps) => {
     </Formik>
   );
 };
-
-export default CreateLiquidityPoolForm;

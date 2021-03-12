@@ -2,6 +2,7 @@ import {
   IKnownTokenData,
   INetwork,
   IToken,
+  KnownContracts,
   KnownToken,
   NetworkId,
 } from "types";
@@ -36,14 +37,18 @@ const networks: { [K in NetworkId]: INetwork } = {
     label: "HT-Mainnet",
     url: "https://http-mainnet.hecochain.com",
     contracts: {
-      index: "0x99c302fa40af033e00821c213059c3910f3018be",
+      factory: "0x41aab7e0aae3ac4ee91e4e023441396c66a74eb2",
+      controller: "0xa65db175e866c7560ca55f684464ad65cc71cf68",
     },
     etherscanUri: "https://scan.hecochain.com",
   },
   [networkIds.HTTEST]: {
     label: "HT-Testnet",
     url: "https://http-testnet.hecochain.com",
-    contracts: { index: "0x99c302fa40af033e00821c213059c3910f3018be" },
+    contracts: {
+      factory: "0x41aab7e0aae3ac4ee91e4e023441396c66a74eb2",
+      controller: "0xa65db175e866c7560ca55f684464ad65cc71cf68",
+    },
     etherscanUri: "https://testnet.hecoinfo.com/",
   },
 };
@@ -131,9 +136,8 @@ const knownTokens: { [K in KnownToken]: IKnownTokenData } = {
     symbol: "comp",
     coingeckoId: "compound-coin",
     addresses: {
-      // need to update later
-      [networkIds.HTMAINNET]: "0x4d879F43f6644784248553Ee91A2e4Dfb06fE0BC",
-      [networkIds.HTTEST]: "0x4d879F43f6644784248553Ee91A2e4Dfb06fE0BC",
+      [networkIds.HTMAINNET]: "0xd948d1017b81d3497fba3f6f44135d7afe6edfeb",
+      [networkIds.HTTEST]: "0xd948d1017b81d3497fba3f6f44135d7afe6edfeb",
     },
     image: "/assets/svgs/token/comp.svg",
     decimals: 18,
@@ -261,4 +265,14 @@ export const getToken = (tokenId: KnownToken, networkId?: number): IToken => {
     address: token.addresses[fNetworkId],
     icon: TOKEN_ICONS[tokenId],
   };
+};
+
+export const getContractAddress = (
+  networkId: number,
+  contract: KnownContracts
+): string => {
+  if (!validNetworkId(networkId)) {
+    throw new Error(`Unsupported network id: '${networkId}'`);
+  }
+  return networks[networkId].contracts[contract];
 };

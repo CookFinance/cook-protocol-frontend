@@ -61,6 +61,16 @@ export const PlATFORMS = [
 
 export const TEST_MODE = process.env.REACT_APP_TEST || true;
 
+export const FUND_MODULES = TEST_MODE
+  ? [
+      "0xd7a9EbE16f149e366bA784C0B6EcAC876B579df2",
+      "0x3Ccf7574fdEE8fd77c3Fa1ea9B4DB208Ed89296d",
+    ]
+  : [
+      "0xd7a9EbE16f149e366bA784C0B6EcAC876B579df2",
+      "0x3Ccf7574fdEE8fd77c3Fa1ea9B4DB208Ed89296d",
+    ];
+
 export const NETWORK_CONFIG = TEST_MODE
   ? {
       method: "wallet_addEthereumChain",

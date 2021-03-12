@@ -8,13 +8,11 @@ import { getCoinsPrices } from "utils/token";
 
 const GlobalContext = React.createContext<
   IGlobalData & {
-    addFund: (_: ICreateFund) => void;
     setUniswapModalVisible: (_: boolean) => void;
   }
 >({
   createdPools: [],
   tokenPrices: defaultCoinPrices,
-  addFund: (_: ICreateFund) => {},
   ethBalance: ZERO_NUMBER,
   uniswapModalVisible: false,
   setUniswapModalVisible: (_: boolean) => {},
@@ -38,13 +36,6 @@ export const GlobalProvider: React.FC = (props) => {
     uniswapModalVisible: false,
   });
   const { account, library: provider } = useConnectedWeb3Context();
-
-  const addFund = (payload: ICreateFund) => {
-    setState((prev) => ({
-      ...prev,
-      createdPools: [...prev.createdPools, payload],
-    }));
-  };
 
   const setUniswapModalVisible = (uniswapModalVisible: boolean) => {
     setState((prev) => ({
@@ -83,9 +74,7 @@ export const GlobalProvider: React.FC = (props) => {
   }, [provider]);
 
   return (
-    <GlobalContext.Provider
-      value={{ ...state, addFund, setUniswapModalVisible }}
-    >
+    <GlobalContext.Provider value={{ ...state, setUniswapModalVisible }}>
       {props.children}
       {state.uniswapModalVisible && (
         <UniswapModal

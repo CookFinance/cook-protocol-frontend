@@ -12,7 +12,8 @@ export interface INetwork {
   label: string;
   url: string;
   contracts: {
-    index: string;
+    factory: string;
+    controller: string;
   };
   etherscanUri: string;
 }

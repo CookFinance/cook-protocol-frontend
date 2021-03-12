@@ -84,6 +84,7 @@ export const getCoinsPrices = async (): Promise<ICoinPrices> => {
 
   const promises = Object.keys(tokenIds).map(async (tokenId) => {
     const token = getToken(tokenId as KnownToken);
+
     const tokenPrices = await getCoinPrices(token.coingeckoId);
     prices.current[tokenId as KnownToken] = tokenPrices.current;
     prices.prev[tokenId as KnownToken] = tokenPrices.prev;
@@ -104,8 +105,8 @@ export const getCoinPrices = async (
     return { current: ZERO_NUMBER, prev: ZERO_NUMBER };
   }
 
-  const currentPrice = prices[prices.length - 1][1];
-  const prevPrice = prices[0][1];
+  const currentPrice = Number(prices[prices.length - 1][1]).toFixed(6);
+  const prevPrice = Number(prices[0][1]).toFixed();
   return {
     current: parseEther(getDecimalsLimitedString(String(currentPrice))),
     prev: parseEther(getDecimalsLimitedString(String(prevPrice))),

@@ -15,11 +15,6 @@ const routes = [
       },
       {
         exact: true,
-        path: "/funds",
-        component: lazy(() => import("pages/FundPage")),
-      },
-      {
-        exact: true,
         path: "/fund/:id",
         component: lazy(() => import("pages/FundDetailsPage")),
       },

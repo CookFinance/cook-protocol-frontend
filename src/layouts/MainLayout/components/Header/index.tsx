@@ -53,7 +53,7 @@ export const Header = () => {
           <LogoSVG />
         </NavLink>
         <div className={classes.navItems}>
-          <HeaderNavbarItem link="/funds" title="Fund" />
+          <HeaderNavbarItem link="/overview" title="Fund" />
           <HeaderNavbarItem link="/mining" title="Mining" />
           <HeaderNavbarItem link="/governance" title="Governance" />
         </div>

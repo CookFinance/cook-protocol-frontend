@@ -1,6 +1,6 @@
 import { TransactionReceipt } from "@ethersproject/abstract-provider/lib/index";
 import { BigNumber, Contract, Wallet, ethers, utils } from "ethers";
-import { IToken, Maybe } from "types";
+import { Maybe } from "types";
 import { getLogger } from "utils/logger";
 import { isAddress, isContract } from "utils/tools";
 
