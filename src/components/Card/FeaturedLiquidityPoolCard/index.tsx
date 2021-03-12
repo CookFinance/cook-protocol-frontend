@@ -6,6 +6,7 @@ import { getToken } from "config/network";
 import { useConnectedWeb3Context } from "contexts";
 import { transparentize } from "polished";
 import React from "react";
+import { NavLink } from "react-router-dom";
 import { IPoolDetails, KnownToken } from "types";
 
 const useStyles = makeStyles((theme) => ({
@@ -14,12 +15,23 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 8,
     padding: "3px 23px",
   },
+  header: {
+    padding: "30px 0",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
   title: {
     fontSize: 20,
     color: theme.colors.reverse,
     fontWeight: 200,
-    padding: "30px 0",
     lineHeight: "24px",
+  },
+  details: {
+    textDecoration: "none",
+    color: transparentize(0.3, theme.colors.success),
+    fontSize: 14,
+    lineHeight: "21px",
   },
   content: {
     padding: "40px 0",
@@ -85,9 +97,13 @@ export const FeaturedLiquidityPoolCard = (props: IProps) => {
 
   return (
     <div className={clsx(classes.root, props.className)}>
-      <Typography align="center" className={classes.title}>
-        {name}
-      </Typography>
+      <div className={classes.header}>
+        <Typography className={classes.title}>{name}</Typography>
+        <NavLink className={classes.details} to={`/fund/${props.data.id}`}>
+          See Details
+        </NavLink>
+      </div>
+
       <FundChart data={props.data} />
       <div className={classes.content}>
         <div className={classes.itemRow}>

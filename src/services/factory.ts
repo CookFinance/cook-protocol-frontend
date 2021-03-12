@@ -1,10 +1,9 @@
-import { TransactionReceipt } from "@ethersproject/abstract-provider/lib/index";
 import { FUND_MODULES } from "config/constants";
 import { BigNumber, Contract, Wallet, ethers } from "ethers";
 import { Maybe } from "types";
 import { getLogger } from "utils/logger";
 
-const logger = getLogger("Services::Erc20");
+const logger = getLogger("Services::Factory");
 
 const factoryAbi = [
   "function create(address[] memory _components,int256[] memory _units,address[] memory _modules,address _manager,string memory _name,string memory _symbol) external returns (address)",
@@ -38,7 +37,7 @@ class FactoryService {
   }
 
   /**
-   * create fund
+   * create fund with token addresses and weights
    */
   createFund = async (
     components: string[],
@@ -46,7 +45,7 @@ class FactoryService {
     manager: string,
     name: string,
     symbol: string
-  ): Promise<TransactionReceipt> => {
+  ): Promise<string> => {
     const transactionObject = await this.contract.create(
       components,
       units,
@@ -59,7 +58,7 @@ class FactoryService {
       }
     );
     logger.log(`create transaccion hash: ${transactionObject.hash}`);
-    return this.provider.waitForTransaction(transactionObject.hash);
+    return transactionObject.hash;
   };
 
   getController = async (): Promise<string> => {

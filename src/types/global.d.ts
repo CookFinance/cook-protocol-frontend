@@ -118,6 +118,12 @@ export interface IGlobalData {
   tokenPrices: ICoinPrices;
   ethBalance: BigNumber;
   uniswapModalVisible: boolean;
+  transactionModalInfo: {
+    visible: boolean;
+    txId: string;
+    description?: string;
+    title?: string;
+  };
 }
 
 export interface ITransactionItem {

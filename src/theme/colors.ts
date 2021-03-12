@@ -18,6 +18,7 @@ const colors = [
       warn: "#E04848",
       success: "#60E160",
       neutral900: "#393550",
+      spin: "#00B982",
     },
   },
   {
@@ -37,6 +38,7 @@ const colors = [
       warn: "#E04848",
       success: "#60E160",
       neutral900: "#393550",
+      spin: "#00B982",
     },
   },
 ];

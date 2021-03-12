@@ -1,14 +1,20 @@
-import { UniswapModal } from "components";
+import { TransactionProgressModal, UniswapModal } from "components";
 import { defaultCoinPrices } from "config/constants";
 import { useConnectedWeb3Context } from "contexts/connectedWeb3";
 import React, { useEffect, useState } from "react";
-import { ICreateFund, IGlobalData } from "types";
+import { IGlobalData } from "types";
 import { ZERO_NUMBER } from "utils/number";
 import { getCoinsPrices } from "utils/token";
 
 const GlobalContext = React.createContext<
   IGlobalData & {
     setUniswapModalVisible: (_: boolean) => void;
+    setTransactionModalVisible: (
+      visible: boolean,
+      txId?: string,
+      title?: string,
+      description?: string
+    ) => void;
   }
 >({
   createdPools: [],
@@ -16,6 +22,11 @@ const GlobalContext = React.createContext<
   ethBalance: ZERO_NUMBER,
   uniswapModalVisible: false,
   setUniswapModalVisible: (_: boolean) => {},
+  transactionModalInfo: {
+    visible: false,
+    txId: "",
+  },
+  setTransactionModalVisible: (_: boolean) => {},
 });
 
 export const useGlobal = () => {
@@ -34,6 +45,10 @@ export const GlobalProvider: React.FC = (props) => {
     tokenPrices: defaultCoinPrices,
     ethBalance: ZERO_NUMBER,
     uniswapModalVisible: false,
+    transactionModalInfo: {
+      visible: false,
+      txId: "",
+    },
   });
   const { account, library: provider } = useConnectedWeb3Context();
 
@@ -71,15 +86,43 @@ export const GlobalProvider: React.FC = (props) => {
     return () => {
       isMounted = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [provider]);
 
+  const setTransactionModalVisible = (
+    visible: boolean,
+    txId?: string,
+    title?: string,
+    description?: string
+  ) => {
+    setState((prev) => ({
+      ...prev,
+      transactionModalInfo: {
+        visible,
+        txId: txId || "",
+        title,
+        description,
+      },
+    }));
+  };
+
   return (
-    <GlobalContext.Provider value={{ ...state, setUniswapModalVisible }}>
+    <GlobalContext.Provider
+      value={{ ...state, setUniswapModalVisible, setTransactionModalVisible }}
+    >
       {props.children}
       {state.uniswapModalVisible && (
         <UniswapModal
           onClose={() => setUniswapModalVisible(false)}
           visible={state.uniswapModalVisible}
+        />
+      )}
+      {state.transactionModalInfo.visible && (
+        <TransactionProgressModal
+          {...state.transactionModalInfo}
+          onClose={() => {
+            setTransactionModalVisible(false);
+          }}
         />
       )}
     </GlobalContext.Provider>

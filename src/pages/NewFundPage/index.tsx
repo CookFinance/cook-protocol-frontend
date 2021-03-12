@@ -1,6 +1,6 @@
 import { makeStyles } from "@material-ui/core";
 import clsx from "clsx";
-import { CreateLiquidityPoolForm } from "components";
+import { CreateLiquidityPoolForm, Spinner } from "components";
 import { DEFAULT_NETWORK_ID } from "config/constants";
 import { getContractAddress, getToken } from "config/network";
 import { useConnectedWeb3Context, useGlobal } from "contexts";
@@ -21,8 +21,11 @@ const NewFundPage = () => {
   const classes = useStyles();
   const history = useHistory();
   const { account, library: provider, networkId } = useConnectedWeb3Context();
+  const { setTransactionModalVisible } = useGlobal();
 
   const onSubmit = async (payload: ICreateFund) => {
+    if (!provider) return;
+
     const factoryAddress = getContractAddress(
       networkId || DEFAULT_NETWORK_ID,
       "factory"
@@ -42,14 +45,17 @@ const NewFundPage = () => {
     });
 
     try {
-      const tx = await factoryService.createFund(
+      const txHash = await factoryService.createFund(
         tokens,
         units,
         account || "",
         payload.name,
         payload.symbol
       );
-      // history.push("/");
+      setTransactionModalVisible(true, txHash);
+      await provider.waitForTransaction(txHash);
+      setTransactionModalVisible(false);
+      history.push("/");
     } catch (error) {
       console.error(error);
     }

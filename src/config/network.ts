@@ -40,7 +40,7 @@ const networks: { [K in NetworkId]: INetwork } = {
       factory: "0x41aab7e0aae3ac4ee91e4e023441396c66a74eb2",
       controller: "0xa65db175e866c7560ca55f684464ad65cc71cf68",
     },
-    etherscanUri: "https://scan.hecochain.com",
+    etherscanUri: "https://scan.hecochain.com/",
   },
   [networkIds.HTTEST]: {
     label: "HT-Testnet",
@@ -239,12 +239,13 @@ const validNetworkId = (networkId: number): networkId is NetworkId => {
   return networks[networkId as NetworkId] !== undefined;
 };
 
-export const getEtherscanUri = (networkId: number): string => {
-  if (!validNetworkId(networkId)) {
-    throw new Error(`Unsupported network id: '${networkId}'`);
+export const getEtherscanUri = (networkId?: number): string => {
+  const fNetworkId = networkId || DEFAULT_NETWORK_ID;
+  if (!validNetworkId(fNetworkId)) {
+    throw new Error(`Unsupported network id: '${fNetworkId}'`);
   }
 
-  return networks[networkId].etherscanUri;
+  return networks[fNetworkId].etherscanUri;
 };
 
 export const getToken = (tokenId: KnownToken, networkId?: number): IToken => {

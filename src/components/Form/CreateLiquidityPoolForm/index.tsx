@@ -14,8 +14,8 @@ import CloseIcon from "@material-ui/icons/Close";
 import clsx from "clsx";
 import { PlATFORMS, TOKEN_ICONS } from "config/constants";
 import { getToken, tokenIds } from "config/network";
+import { useConnectedWeb3Context } from "contexts";
 import { Form, Formik } from "formik";
-import { transparentize } from "polished";
 import React from "react";
 import useCommonStyles from "styles/common";
 import { ICreateFund, KnownToken } from "types";
@@ -169,6 +169,8 @@ export interface IProps {
 export const CreateLiquidityPoolForm = (props: IProps) => {
   const classes = useStyles();
   const commonClasses = useCommonStyles();
+  const { account, setWalletConnectModalOpened } = useConnectedWeb3Context();
+  const isWalletConnected = !!account;
   const initialFormValue: ICreateFundFormValues = {
     name: "",
     symbol: "",
@@ -185,6 +187,10 @@ export const CreateLiquidityPoolForm = (props: IProps) => {
     <Formik
       initialValues={initialFormValue}
       onSubmit={async (values) => {
+        if (!isWalletConnected) {
+          setWalletConnectModalOpened(true);
+          return;
+        }
         props.onSubmit(values);
       }}
       validationSchema={Yup.object().shape({
@@ -476,8 +482,14 @@ export const CreateLiquidityPoolForm = (props: IProps) => {
               type="submit"
               variant="contained"
             >
-              Create&nbsp;&nbsp;&nbsp;
-              <ChevronRightIcon />
+              {isWalletConnected ? (
+                <>
+                  Create&nbsp;&nbsp;&nbsp;
+                  <ChevronRightIcon />
+                </>
+              ) : (
+                <>Connect Wallet and Create</>
+              )}
             </Button>
           </div>
         </Form>

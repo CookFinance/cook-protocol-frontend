@@ -21,6 +21,7 @@ declare module "@material-ui/core/styles/createMuiTheme" {
       warn: string;
       success: string;
       neutral900: string;
+      spin: string;
     };
   }
   // allow configuration using `createMuiTheme`
@@ -44,6 +45,7 @@ declare module "@material-ui/core/styles/createMuiTheme" {
       warn: string;
       success: string;
       neutral900: string;
+      spin: string;
     };
   }
 }

@@ -52,7 +52,7 @@ const routes = [
       {
         path: "*",
         // eslint-disable-next-line
-        component: () => <Redirect to="/funds" />,
+        component: () => <Redirect to="/overview" />,
       },
     ],
   },
